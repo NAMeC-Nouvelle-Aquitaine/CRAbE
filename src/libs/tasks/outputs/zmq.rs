@@ -1,11 +1,14 @@
 use crate::libs::cli::Cli;
-use crate::libs::data::{DataStore, Robot, TeamColor};
+use crate::libs::constants::NUMBER_OF_ROBOTS;
+use crate::libs::data::{
+    ControllableRobot, ControllableRobotFeedback, DataStore, Robot, TeamColor,
+};
+use crate::libs::protobuf::simulation_packet::RobotFeedback;
 use crate::libs::tasks::task::Task;
+use log::debug;
 use nalgebra::Point2;
 use serde::Serialize;
 use zmq::Socket;
-use crate::libs::constants::NUMBER_OF_ROBOTS;
-
 
 pub struct ZmqOutputTask {
     socket: Socket,
@@ -29,6 +32,7 @@ pub struct ZmqPacketRobots {
 pub struct ZmqRobot {
     pub position: [f32; 2],
     pub orientation: f32,
+    pub feedback: Option<ControllableRobotFeedback>,
 }
 
 impl From<Robot> for ZmqRobot {
@@ -36,6 +40,17 @@ impl From<Robot> for ZmqRobot {
         Self {
             position: [value.position.x, value.position.y],
             orientation: value.orientation,
+            feedback: None,
+        }
+    }
+}
+
+impl From<ControllableRobot> for ZmqRobot {
+    fn from(value: ControllableRobot) -> Self {
+        Self {
+            position: [value.robot.position.x, value.robot.position.y],
+            orientation: value.robot.orientation,
+            feedback: value.feedback,
         }
     }
 }
@@ -45,19 +60,11 @@ impl ZmqPacket {
         let yellow;
         let blue;
         if let TeamColor::BLUE = value.color {
-            blue = value
-                .allies
-                .clone()
-                .map(|cr| cr.robot)
-                .map(|r| ZmqRobot::from(r));
+            blue = value.allies.clone().map(|r| ZmqRobot::from(r));
             yellow = value.enemies.map(|r| ZmqRobot::from(r));
         } else {
             blue = value.enemies.map(|r| ZmqRobot::from(r));
-            yellow = value
-                .allies
-                .clone()
-                .map(|cr| cr.robot)
-                .map(|r| ZmqRobot::from(r));
+            yellow = value.allies.clone().map(|r| ZmqRobot::from(r));
         };
 
         Self {
@@ -91,6 +98,8 @@ impl Task for ZmqOutputTask {
     fn run(&mut self, data_store: &mut DataStore) -> Result<(), String> {
         let payload = serde_json::to_string(&ZmqPacket::with_data_store(data_store))
             .expect("TODO: some meaningful message");
+
+        debug!("{:?}", payload);
         self.socket.send(payload.as_str(), zmq::DONTWAIT).unwrap();
 
         Ok(())

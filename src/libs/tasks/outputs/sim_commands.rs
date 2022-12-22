@@ -1,5 +1,5 @@
 use crate::libs::cli::Cli;
-use crate::libs::data::{ControllableRobot, Robot};
+use crate::libs::data::{ControllableRobot, ControllableRobotFeedback, Robot};
 use crate::libs::protobuf::simulation_packet::robot_move_command::Command;
 use crate::libs::protobuf::simulation_packet::{
     MoveWheelVelocity, RobotCommand, RobotControl, RobotControlResponse, RobotMoveCommand,
@@ -100,7 +100,9 @@ impl Task for SimCommandsOutputTask {
                                 "assigned feedback {:?} to robot #{}",
                                 robot_feedback, robot_feedback.id
                             );
-                            robot.feedback = Some(robot_feedback);
+                            robot.feedback = Some(ControllableRobotFeedback {
+                                infrared: robot_feedback.dribbler_ball_contact.unwrap_or_default(),
+                            });
                         }
                     }
                 }

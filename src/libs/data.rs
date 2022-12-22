@@ -67,7 +67,13 @@ impl Robot {
 pub struct ControllableRobot {
     pub robot: Robot,
     pub command: Option<RobotCommand>,
-    pub feedback: Option<RobotFeedback>,
+    pub feedback: Option<ControllableRobotFeedback>,
+}
+
+#[derive(Default, Clone, Serialize)]
+pub struct ControllableRobotFeedback {
+    pub infrared: bool,
+    // TODO: battery
 }
 
 impl ControllableRobot {
