@@ -27,11 +27,13 @@ impl Default for ZmqInputTask {
 #[serde(untagged)]
 pub enum Command {
     // #[serde(rename(deserialize = "kick"))]
-    Kick { power: f32 },
+    Kick { power: f32, chip_kick: bool },
     // #[serde(rename(deserialize = "control"))]
     Control { dx: f32, dy: f32, dturn: f32 },
     // #[serde(rename(deserialize = "led"))]
     Leds { r: u8, g: u8, b: u8 },
+
+    Dribble { speed: f32 }
 }
 
 #[derive(Deserialize)]
@@ -81,8 +83,11 @@ fn process_command(command: ZmqInputTaskReq, data_store: &mut DataStore) -> ZmqI
     let team: String = data_store.color.to_string();
     if command.color == team {
         match command.params {
-            Command::Kick { power } => {
-                data_store.allies[command.number as usize].kick(KickType::Straight, power);
+            Command::Kick { power , chip_kick } => {
+                data_store.allies[command.number as usize].kick(match chip_kick {
+                    true => KickType::Chip,
+                    false => KickType::Straight
+                }, power);
                 response.succeeded = true;
                 response.message = "Ok".to_string();
             }
@@ -94,6 +99,11 @@ fn process_command(command: ZmqInputTaskReq, data_store: &mut DataStore) -> ZmqI
             Command::Leds { .. } => {
                 error!("ROBOTS DON'T EVEN HAVE LEDS");
                 response.message = "Robots don't have leds ..".to_string();
+            }
+            Command::Dribble { speed } => {
+                data_store.allies[command.number as usize].dribble( speed);
+                response.succeeded = true;
+                response.message = "Ok".to_string();
             }
         }
     } else {

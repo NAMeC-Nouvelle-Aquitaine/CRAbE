@@ -22,7 +22,7 @@ impl ControllableRobot {
         let robot_to_ball = ball - self.robot.position;
         let ball_to_pos = pos - ball;
 
-        self.dribble(true);
+        self.dribble(1000.0);
         if self.goto(Vector3::new(
             ball.x,
             ball.y,
@@ -33,7 +33,7 @@ impl ControllableRobot {
             let angle = ball_to_pos.y.atan2(ball_to_pos.x);
             if self.goto(Vector3::new(ball.x, ball.y, angle)) {
                 if (self.robot.orientation - angle).abs() < 0.05 {
-                    self.dribble(false);
+                    self.dribble(0.0);
                     self.kick(Straight, 0.5);
                 }
             }

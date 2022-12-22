@@ -94,7 +94,7 @@ impl Drop for SimCommandsOutputTask {
             })
             .map(|mut cr| {
                 // cr.control(0.0, 0.0, 0.0);
-                cr.dribble(false);
+                cr.dribble(0.0);
                 cr
             });
         self.send(&mut robots);

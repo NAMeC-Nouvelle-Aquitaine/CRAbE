@@ -16,7 +16,7 @@ impl Task for PassExampleTask {
     fn run(&mut self, data_store: &mut DataStore) -> Result<(), String> {
         let [ref mut sender, ref mut receiver, ..] = data_store.allies;
 
-        receiver.dribble(true);
+        receiver.dribble(1000.0);
         sender.pass(&data_store.ball, receiver);
 
         Ok(())
