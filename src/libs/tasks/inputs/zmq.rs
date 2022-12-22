@@ -16,6 +16,8 @@ impl Default for ZmqInputTask {
         let ctx = zmq::Context::new();
 
         let socket = ctx.socket(zmq::REP).unwrap();
+        socket.set_rcvtimeo(1).expect("Failed to set rcv timeout");
+        socket.set_sndtimeo(1).expect("Failed to set snd timeout");
         socket.bind("tcp://127.0.0.1:7558").unwrap();
 
         Self { socket }
@@ -67,7 +69,7 @@ impl Task for ZmqInputTask {
             let req: ZmqInputTaskReq = serde_json::from_str(msg.as_str().unwrap()).unwrap();
             let rep = process_command(req, data_store);
             let rep_payload = serde_json::to_string(&rep).unwrap();
-            self.socket.send(rep_payload.as_str(), 0).unwrap();
+            self.socket.send(rep_payload.as_str(), DONTWAIT).unwrap();
         }
 
         Ok(())

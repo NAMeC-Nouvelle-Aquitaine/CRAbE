@@ -12,6 +12,7 @@ use software::libs::tasks::task::Task;
 #[macro_use]
 extern crate log;
 use env_logger::Env;
+use software::libs::tasks::examples::move_to_ball::MoveToBallExampleTask;
 use software::libs::tasks::inputs::zmq::ZmqInputTask;
 use software::libs::tasks::outputs::ball_printer::BallPrinterOutputTask;
 use software::libs::tasks::outputs::zmq::ZmqOutputTask;
@@ -20,7 +21,7 @@ use software::libs::tasks::outputs::zmq::ZmqOutputTask;
 
 fn main() {
     let env = Env::default()
-        .filter_or("MY_LOG_LEVEL", "debug")
+        .filter_or("MY_LOG_LEVEL", "trace")
         .write_style_or("MY_LOG_STYLE", "always");
     env_logger::init_from_env(env);
     info!("starting up");
@@ -32,7 +33,7 @@ fn main() {
     let mut pipeline: Pipeline = vec![
         VisionInputTask::with_cli_boxed(&mut cli),
         PassoireFilterTask::with_cli_boxed(&mut cli),
-        // MoveToBallExampleTask::default_boxed(),
+        // MoveToBallExampleTask::with_cli_boxed(&mut cli),
         // PassExampleTask::with_cli_boxed(&mut cli),
         // BallPrinterOutputTask::with_cli_boxed(&mut cli),
         ZmqOutputTask::with_cli_boxed(&mut cli),

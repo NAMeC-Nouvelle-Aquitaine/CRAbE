@@ -42,7 +42,7 @@ impl Task for VisionInputTask {
             .join_multicast_v4(&ipv4, &Ipv4Addr::UNSPECIFIED)
             .expect("Error to join multicast group");
         socket
-            .set_read_timeout(Some(Duration::from_millis(17)))
+            .set_read_timeout(Some(Duration::from_millis(15)))
             .expect("Failed to set read timeout");
 
         // socket

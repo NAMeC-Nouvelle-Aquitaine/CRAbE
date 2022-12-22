@@ -81,6 +81,7 @@ impl Default for ZmqOutputTask {
         let ctx = zmq::Context::new();
 
         let socket = ctx.socket(zmq::PUB).unwrap();
+        socket.set_sndtimeo(1).expect("Failed to set snd timeout");
         socket.bind("tcp://127.0.0.1:7557").unwrap();
 
         Self { socket }
