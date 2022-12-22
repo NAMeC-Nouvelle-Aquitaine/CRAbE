@@ -2,7 +2,7 @@ use crate::libs::cli::Cli;
 use crate::libs::data::{DataStore, Robot, TeamColor};
 use crate::libs::skills::kick::KickType;
 use crate::libs::tasks::task::Task;
-use log::error;
+use log::{debug, error, trace};
 use nalgebra::Point2;
 use serde::{Deserialize, Serialize};
 use zmq::{Socket, DONTWAIT};
@@ -33,7 +33,7 @@ pub enum Command {
     // #[serde(rename(deserialize = "led"))]
     Leds { r: u8, g: u8, b: u8 },
 
-    Dribble { speed: f32 }
+    Dribble { speed: f32 },
 }
 
 #[derive(Deserialize)]
@@ -63,7 +63,7 @@ impl Task for ZmqInputTask {
         let mut msg = zmq::Message::new();
 
         if let Ok(_) = self.socket.recv(&mut msg, DONTWAIT) {
-            println!("Received {}", msg.as_str().unwrap());
+            debug!("Received {}", msg.as_str().unwrap());
             let req: ZmqInputTaskReq = serde_json::from_str(msg.as_str().unwrap()).unwrap();
             let rep = process_command(req, data_store);
             let rep_payload = serde_json::to_string(&rep).unwrap();
@@ -83,11 +83,14 @@ fn process_command(command: ZmqInputTaskReq, data_store: &mut DataStore) -> ZmqI
     let team: String = data_store.color.to_string();
     if command.color == team {
         match command.params {
-            Command::Kick { power , chip_kick } => {
-                data_store.allies[command.number as usize].kick(match chip_kick {
-                    true => KickType::Chip,
-                    false => KickType::Straight
-                }, power);
+            Command::Kick { power, chip_kick } => {
+                data_store.allies[command.number as usize].kick(
+                    match chip_kick {
+                        true => KickType::Chip,
+                        false => KickType::Straight,
+                    },
+                    power,
+                );
                 response.succeeded = true;
                 response.message = "Ok".to_string();
             }
@@ -101,7 +104,7 @@ fn process_command(command: ZmqInputTaskReq, data_store: &mut DataStore) -> ZmqI
                 response.message = "Robots don't have leds ..".to_string();
             }
             Command::Dribble { speed } => {
-                data_store.allies[command.number as usize].dribble( speed);
+                data_store.allies[command.number as usize].dribble(speed);
                 response.succeeded = true;
                 response.message = "Ok".to_string();
             }

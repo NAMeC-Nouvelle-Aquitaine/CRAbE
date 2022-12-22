@@ -12,6 +12,7 @@ fn main() {
             &[
                 "proto/simulation/ssl_simulation_control.proto",
                 "proto/simulation/ssl_simulation_robot_control.proto",
+                "proto/simulation/ssl_simulation_robot_feedback.proto",
             ],
             &["proto/simulation/"],
         )

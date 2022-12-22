@@ -1,9 +1,9 @@
+use crate::libs::constants::NUMBER_OF_ROBOTS;
 use crate::libs::protobuf::game_controller_packet::Referee;
-use crate::libs::protobuf::simulation_packet::RobotCommand;
+use crate::libs::protobuf::simulation_packet::{RobotCommand, RobotFeedback};
 use crate::libs::protobuf::vision_packet::{SslDetectionRobot, SslWrapperPacket};
 use nalgebra::Point2;
 use serde::{Deserialize, Serialize};
-use crate::libs::constants::NUMBER_OF_ROBOTS;
 
 #[derive(Default)]
 pub struct DataStore {
@@ -14,15 +14,15 @@ pub struct DataStore {
     pub enemies: [Robot; NUMBER_OF_ROBOTS],
     pub vision: Vec<SslWrapperPacket>,
     pub game_controller: Option<Referee>,
-    pub field : Option<Field>
+    pub field: Option<Field>,
 }
 
 #[derive(Default, Serialize, Deserialize, Copy, Clone)]
 pub struct Field {
-    pub width : f32,
+    pub width: f32,
     pub length: f32,
     pub goal_width: f32,
-    pub goal_depth : f32,
+    pub goal_depth: f32,
 }
 
 #[derive(Copy, Clone, Serialize, Deserialize)]
@@ -67,6 +67,7 @@ impl Robot {
 pub struct ControllableRobot {
     pub robot: Robot,
     pub command: Option<RobotCommand>,
+    pub feedback: Option<RobotFeedback>,
 }
 
 impl ControllableRobot {

@@ -577,3 +577,28 @@ pub struct RobotControl {
     #[prost(message, repeated, tag = "1")]
     pub robot_commands: ::prost::alloc::vec::Vec<RobotCommand>,
 }
+/// Feedback from a robot
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RobotFeedback {
+    /// Id of the robot
+    #[prost(uint32, required, tag = "1")]
+    pub id: u32,
+    /// Has the dribbler contact to the ball right now
+    #[prost(bool, optional, tag = "2")]
+    pub dribbler_ball_contact: ::core::option::Option<bool>,
+    /// Custom robot feedback for specific simulators (the protobuf files are managed by the simulators)
+    #[prost(message, optional, tag = "3")]
+    pub custom: ::core::option::Option<::prost_types::Any>,
+}
+/// Response to RobotControl from the simulator to the connected client
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RobotControlResponse {
+    /// List of errors, like using unsupported features
+    #[prost(message, repeated, tag = "1")]
+    pub errors: ::prost::alloc::vec::Vec<SimulatorError>,
+    /// Feedback of the robots
+    #[prost(message, repeated, tag = "2")]
+    pub feedback: ::prost::alloc::vec::Vec<RobotFeedback>,
+}

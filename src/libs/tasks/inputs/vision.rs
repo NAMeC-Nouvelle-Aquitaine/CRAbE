@@ -3,7 +3,7 @@ use crate::libs::protobuf::vision_packet::SslWrapperPacket;
 use crate::libs::{data, tasks};
 use clap::{Args, Parser};
 use data::DataStore;
-use log::{error, trace};
+use log::{error, trace, warn};
 use prost::Message;
 use std::io::Cursor;
 use std::net::{Ipv4Addr, UdpSocket};
@@ -42,7 +42,7 @@ impl Task for VisionInputTask {
             .join_multicast_v4(&ipv4, &Ipv4Addr::UNSPECIFIED)
             .expect("Error to join multicast group");
         socket
-            .set_read_timeout(Some(Duration::from_millis(10)))
+            .set_read_timeout(Some(Duration::from_millis(17)))
             .expect("Failed to set read timeout");
 
         // socket
@@ -75,10 +75,10 @@ impl Task for VisionInputTask {
         }
 
         if recieved_packets_count == 0 {
-            error!("VISION - Check that Vision or Simulation is running");
+            warn!("check that Vision or Simulation is running");
         } else {
             trace!(
-                "VISION - GRABBED A FRAME (cnt: {}), took {}us",
+                "grabbed a frame (cnt: {}), took {} us",
                 recieved_packets_count,
                 start.elapsed().as_micros()
             );

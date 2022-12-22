@@ -1,7 +1,7 @@
 use crate::libs::data;
 use crate::libs::tasks::task::Task;
 use data::DataStore;
-use log::info;
+use log::{info, trace};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::time::Instant;
@@ -25,7 +25,7 @@ pub fn run_pipeline(mut data_store: &mut DataStore, pipeline: &mut Pipeline) {
                 .expect("TODO: some good error lmao")
         });
 
-        info!(
+        trace!(
             "pipeline took {:>6} ms",
             start.elapsed().as_micros() as f64 / 1000.0
         );
