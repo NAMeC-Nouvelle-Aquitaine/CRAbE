@@ -6,7 +6,7 @@ use crate::libs::tasks::task::Task;
 pub struct UsbCommandsOutputTask;
 
 impl Task for UsbCommandsOutputTask {
-    fn with_cli(cli: &mut Cli) -> Self
+    fn with_cli(_cli: &mut Cli) -> Self
     where
         Self: Sized,
     {

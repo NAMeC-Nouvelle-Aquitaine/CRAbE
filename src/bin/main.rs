@@ -12,9 +12,7 @@ use software::libs::tasks::task::Task;
 #[macro_use]
 extern crate log;
 use env_logger::Env;
-use software::libs::tasks::examples::move_to_ball::MoveToBallExampleTask;
 use software::libs::tasks::inputs::zmq::ZmqInputTask;
-use software::libs::tasks::outputs::ball_printer::BallPrinterOutputTask;
 use software::libs::tasks::outputs::zmq::ZmqOutputTask;
 
 // TODO : Make port, address, interface for multicast to be changed

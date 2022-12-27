@@ -7,7 +7,7 @@ use crate::libs::protobuf::simulation_packet::{
 use crate::libs::{data, tasks};
 use clap::Args;
 use data::DataStore;
-use log::{debug, error, info, trace};
+use log::{debug, error};
 use prost::Message;
 use std::io::Cursor;
 use std::net::UdpSocket;
@@ -83,7 +83,7 @@ impl Task for SimCommandsOutputTask {
     fn run(&mut self, data_store: &mut DataStore) -> Result<(), String> {
         self.send(&mut data_store.allies);
         match self.socket.recv(&mut self.buf) {
-            Ok((p_size)) => {
+            Ok(p_size) => {
                 let packet = RobotControlResponse::decode(Cursor::new(&self.buf[0..p_size]))
                     .expect("Error - Decoding the packet");
 
@@ -107,7 +107,9 @@ impl Task for SimCommandsOutputTask {
                     }
                 }
             }
-            Err((E)) => {}
+            Err(e) => {
+                error!("{}", e);
+            }
         }
         Ok(())
     }

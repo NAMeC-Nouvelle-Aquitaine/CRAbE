@@ -10,7 +10,7 @@ use std::time::SystemTime;
 pub struct MoveToBallExampleTask;
 
 impl Task for MoveToBallExampleTask {
-    fn with_cli(cli: &mut Cli) -> Self
+    fn with_cli(_cli: &mut Cli) -> Self
     where
         Self: Sized,
     {

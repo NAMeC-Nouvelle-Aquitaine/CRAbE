@@ -1,6 +1,6 @@
 use crate::libs::constants::NUMBER_OF_ROBOTS;
 use crate::libs::protobuf::game_controller_packet::Referee;
-use crate::libs::protobuf::simulation_packet::{RobotCommand, RobotFeedback};
+use crate::libs::protobuf::simulation_packet::{RobotCommand};
 use crate::libs::protobuf::vision_packet::{SslDetectionRobot, SslWrapperPacket};
 use nalgebra::Point2;
 use serde::{Deserialize, Serialize};

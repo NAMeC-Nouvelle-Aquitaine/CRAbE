@@ -29,7 +29,7 @@ impl Default for GameControllerInputTask {
 }
 
 impl Task for GameControllerInputTask {
-    fn with_cli(cli: &mut Cli) -> Self
+    fn with_cli(_cli: &mut Cli) -> Self
     where
         Self: Sized,
     {

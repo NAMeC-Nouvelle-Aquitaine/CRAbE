@@ -1,9 +1,9 @@
 use crate::libs::cli::Cli;
 use crate::libs::protobuf::vision_packet::SslWrapperPacket;
 use crate::libs::{data, tasks};
-use clap::{Args, Parser};
+use clap::{Args};
 use data::DataStore;
-use log::{error, trace, warn};
+use log::{trace, warn};
 use prost::Message;
 use std::io::Cursor;
 use std::net::{Ipv4Addr, UdpSocket};

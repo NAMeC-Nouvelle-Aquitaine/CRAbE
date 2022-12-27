@@ -8,7 +8,7 @@ use crate::libs::tasks::task::Task;
 pub struct MoveForwardExampleTask;
 
 impl Task for MoveForwardExampleTask {
-    fn with_cli(cli: &mut Cli) -> Self
+    fn with_cli(_cli: &mut Cli) -> Self
     where
         Self: Sized,
     {

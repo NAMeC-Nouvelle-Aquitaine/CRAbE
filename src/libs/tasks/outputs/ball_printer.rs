@@ -5,8 +5,9 @@ use crate::libs::tasks::task::Task;
 #[derive(Default)]
 pub struct BallPrinterOutputTask;
 
+// TODO : Remove this on the output
 impl Task for BallPrinterOutputTask {
-    fn with_cli(cli: &mut Cli) -> Self
+    fn with_cli(_cli: &mut Cli) -> Self
     where
         Self: Sized,
     {

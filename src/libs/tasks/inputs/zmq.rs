@@ -1,9 +1,8 @@
 use crate::libs::cli::Cli;
-use crate::libs::data::{DataStore, Robot, TeamColor};
+use crate::libs::data::{DataStore};
 use crate::libs::skills::kick::KickType;
 use crate::libs::tasks::task::Task;
-use log::{debug, error, trace};
-use nalgebra::Point2;
+use log::{debug, error};
 use serde::{Deserialize, Serialize};
 use zmq::{Socket, DONTWAIT};
 
@@ -11,6 +10,7 @@ pub struct ZmqInputTask {
     socket: Socket,
 }
 
+// TODO : Necessary ?
 impl Default for ZmqInputTask {
     fn default() -> Self {
         let ctx = zmq::Context::new();
@@ -40,7 +40,7 @@ pub enum Command {
 
 #[derive(Deserialize)]
 pub struct ZmqInputTaskReq {
-    key: String,
+    key: String, // TODO : Remove this key
     color: String,
     number: i32,
     // command: String,
@@ -54,7 +54,7 @@ pub struct ZmqInputTaskRep {
 }
 
 impl Task for ZmqInputTask {
-    fn with_cli(cli: &mut Cli) -> Self
+    fn with_cli(_cli: &mut Cli) -> Self
     where
         Self: Sized,
     {

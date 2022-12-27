@@ -1,7 +1,7 @@
 use crate::libs::data;
 use crate::libs::tasks::task::Task;
 use data::DataStore;
-use log::{info, trace};
+use log::{trace};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::time::Instant;

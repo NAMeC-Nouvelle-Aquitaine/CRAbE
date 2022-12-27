@@ -3,10 +3,8 @@ use crate::libs::constants::NUMBER_OF_ROBOTS;
 use crate::libs::data::{
     ControllableRobot, ControllableRobotFeedback, DataStore, Robot, TeamColor,
 };
-use crate::libs::protobuf::simulation_packet::RobotFeedback;
 use crate::libs::tasks::task::Task;
 use log::debug;
-use nalgebra::Point2;
 use serde::Serialize;
 use zmq::Socket;
 
@@ -89,7 +87,7 @@ impl Default for ZmqOutputTask {
 }
 
 impl Task for ZmqOutputTask {
-    fn with_cli(cli: &mut Cli) -> Self
+    fn with_cli(_cli: &mut Cli) -> Self
     where
         Self: Sized,
     {

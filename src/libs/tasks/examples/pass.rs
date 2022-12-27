@@ -6,7 +6,7 @@ use crate::libs::tasks::task::Task;
 pub struct PassExampleTask;
 
 impl Task for PassExampleTask {
-    fn with_cli(cli: &mut Cli) -> Self
+    fn with_cli(_cli: &mut Cli) -> Self
     where
         Self: Sized,
     {
