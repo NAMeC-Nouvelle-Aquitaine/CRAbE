@@ -6,6 +6,22 @@ use crate::libs::tasks::task::Task;
 #[derive(Default)]
 pub struct PassoireFilterTask;
 
+impl PassoireFilterTask {
+    fn update_robots(&self, allies: &Vec<SslDetectionRobot>, enemies: &Vec<SslDetectionRobot>, data_store: &mut DataStore) {
+        allies.into_iter()
+            .filter(|r| r.robot_id.is_some())
+            .for_each(|r| {
+                data_store.allies[r.robot_id.unwrap() as usize].update_pose(r);
+            });
+
+        enemies.into_iter()
+            .filter(|r| r.robot_id.is_some())
+            .for_each(|r| {
+                data_store.enemies[r.robot_id.unwrap() as usize].update_pose(r);
+            });
+    }
+}
+
 impl Task for PassoireFilterTask {
     fn with_cli(_cli: &mut Cli) -> Self
     where
@@ -31,32 +47,8 @@ impl Task for PassoireFilterTask {
 
                     // TODO: bounds check
                     match data_store.color {
-                        TeamColor::YELLOW => {
-                            robots_yellow.into_iter()
-                                .filter(|r| r.robot_id.is_some())
-                                .for_each(|r| {
-                                    data_store.allies[r.robot_id.unwrap() as usize].update_pose(r);
-                                });
-
-                            robots_blue.into_iter()
-                                .filter(|r| r.robot_id.is_some())
-                                .for_each(|r| {
-                                    data_store.enemies[r.robot_id.unwrap() as usize].update_pose(r);
-                                });
-                        },
-                        TeamColor::BLUE => {
-                            robots_blue.into_iter()
-                                .filter(|r| r.robot_id.is_some())
-                                .for_each(|r| {
-                                    data_store.allies[r.robot_id.unwrap() as usize].update_pose(r);
-                                });
-
-                            robots_yellow.into_iter()
-                                .filter(|r| r.robot_id.is_some())
-                                .for_each(|r| {
-                                    data_store.enemies[r.robot_id.unwrap() as usize].update_pose(r);
-                                });
-                        },
+                        TeamColor::YELLOW => self.update_robots(robots_yellow, robots_blue, data_store),
+                        TeamColor::BLUE => self.update_robots(robots_blue, robots_yellow, data_store),
                     }
                 }
             }
