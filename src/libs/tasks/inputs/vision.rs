@@ -11,11 +11,13 @@ use std::str::FromStr;
 use std::time::{Duration, Instant};
 use tasks::task::Task;
 
+// TODO : Rename buf to vision_buf
+// TODO : Remove the vision_ip and add vision interface on cli option
 const BUFFER_SIZE: usize = 4096;
 
 pub struct VisionInputTask {
     socket: UdpSocket,
-    buf: [u8; BUFFER_SIZE],
+    vision_buf: [u8; BUFFER_SIZE],
 }
 
 #[derive(Args, Clone)]
@@ -51,7 +53,7 @@ impl Task for VisionInputTask {
 
         Self {
             socket,
-            buf: [0u8; BUFFER_SIZE],
+            vision_buf: [0u8; BUFFER_SIZE],
         }
     }
 
@@ -62,8 +64,8 @@ impl Task for VisionInputTask {
         let start = Instant::now();
         let mut recieved_packets_count = 0;
 
-        while let Ok(p_size) = self.socket.recv(&mut self.buf) {
-            let packet = SslWrapperPacket::decode(Cursor::new(&self.buf[0..p_size]))
+        while let Ok(p_size) = self.socket.recv(&mut self.vision_buf) {
+            let packet = SslWrapperPacket::decode(Cursor::new(&self.vision_buf[0..p_size]))
                 .expect("Error - Decoding the packet");
             data_store.vision.push(packet);
 

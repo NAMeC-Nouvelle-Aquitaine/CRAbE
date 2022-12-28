@@ -22,6 +22,7 @@ pub struct SimCommandsOutputTask {
 }
 
 impl SimCommandsOutputTask {
+    // TODO : Seperate the packet preparation to the send
     fn send(&mut self, robots: &mut [ControllableRobot; 6]) {
         let mut packet = RobotControl::default();
         for (id, robot) in robots.iter_mut().enumerate() {
@@ -130,16 +131,11 @@ impl Drop for SimCommandsOutputTask {
                             front_left: 0.0,
                         })),
                     }),
-                    kick_speed: None,
-                    kick_angle: None,
-                    dribbler_speed: None,
+                    kick_speed: Some(0.0),
+                    kick_angle: Some(0.0),
+                    dribbler_speed: Some(0.0),
                 }),
                 feedback: None,
-            })
-            .map(|mut cr| {
-                // cr.control(0.0, 0.0, 0.0);
-                cr.dribble(0.0);
-                cr
             });
         self.send(&mut robots);
     }

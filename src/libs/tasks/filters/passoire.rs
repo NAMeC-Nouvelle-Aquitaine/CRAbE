@@ -1,5 +1,6 @@
 use crate::libs::cli::Cli;
-use crate::libs::data::{DataStore, Field};
+use crate::libs::data::{DataStore, Field, TeamColor};
+use crate::libs::protobuf::vision_packet::SslDetectionRobot;
 use crate::libs::tasks::task::Task;
 
 #[derive(Default)]
@@ -29,19 +30,34 @@ impl Task for PassoireFilterTask {
                         (&detection_frame.robots_blue, &detection_frame.robots_yellow);
 
                     // TODO: bounds check
-                    robots_blue
-                        .into_iter()
-                        .filter(|r| r.robot_id.is_some())
-                        .for_each(|r| {
-                            data_store.allies[r.robot_id.unwrap() as usize].update_pose(r);
-                        });
+                    match data_store.color {
+                        TeamColor::YELLOW => {
+                            robots_yellow.into_iter()
+                                .filter(|r| r.robot_id.is_some())
+                                .for_each(|r| {
+                                    data_store.allies[r.robot_id.unwrap() as usize].update_pose(r);
+                                });
 
-                    robots_yellow
-                        .into_iter()
-                        .filter(|r| r.robot_id.is_some())
-                        .for_each(|r| {
-                            data_store.enemies[r.robot_id.unwrap() as usize].update_pose(r);
-                        });
+                            robots_blue.into_iter()
+                                .filter(|r| r.robot_id.is_some())
+                                .for_each(|r| {
+                                    data_store.enemies[r.robot_id.unwrap() as usize].update_pose(r);
+                                });
+                        },
+                        TeamColor::BLUE => {
+                            robots_blue.into_iter()
+                                .filter(|r| r.robot_id.is_some())
+                                .for_each(|r| {
+                                    data_store.allies[r.robot_id.unwrap() as usize].update_pose(r);
+                                });
+
+                            robots_yellow.into_iter()
+                                .filter(|r| r.robot_id.is_some())
+                                .for_each(|r| {
+                                    data_store.enemies[r.robot_id.unwrap() as usize].update_pose(r);
+                                });
+                        },
+                    }
                 }
             }
 
