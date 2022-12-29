@@ -1,5 +1,5 @@
 use crate::libs::cli::Cli;
-use crate::libs::data::{DataStore, Field, TeamColor};
+use crate::libs::data::{ControllableRobot, DataStore, Field, Robot, TeamColor};
 use crate::libs::protobuf::vision_packet::SslDetectionRobot;
 use crate::libs::tasks::task::Task;
 
@@ -7,17 +7,17 @@ use crate::libs::tasks::task::Task;
 pub struct PassoireFilterTask;
 
 impl PassoireFilterTask {
-    fn update_robots(&self, allies: &Vec<SslDetectionRobot>, enemies: &Vec<SslDetectionRobot>, data_store: &mut DataStore) {
+    fn update_robots(&self, allies: &Vec<SslDetectionRobot>, enemies: &Vec<SslDetectionRobot>, store_allies: &mut [ControllableRobot], store_enemies: &mut [Robot]) {
         allies.into_iter()
             .filter(|r| r.robot_id.is_some())
             .for_each(|r| {
-                data_store.allies[r.robot_id.unwrap() as usize].update_pose(r);
+                store_allies[r.robot_id.unwrap() as usize].update_pose(r);
             });
 
         enemies.into_iter()
             .filter(|r| r.robot_id.is_some())
             .for_each(|r| {
-                data_store.enemies[r.robot_id.unwrap() as usize].update_pose(r);
+                store_enemies[r.robot_id.unwrap() as usize].update_pose(r);
             });
     }
 }
@@ -31,9 +31,10 @@ impl Task for PassoireFilterTask {
     }
 
     fn run(&mut self, data_store: &mut DataStore) -> Result<(), String> {
-        let mut packets = data_store.vision.iter();
 
-        while let Some(packet) = packets.next() {
+        let (packets, allies, enemies) = (&mut data_store.vision, &mut data_store.allies, &mut data_store.enemies);
+
+        for packet in packets.iter_mut() {
             match &packet.detection {
                 None => {}
                 Some(detection_frame) => {
@@ -47,8 +48,8 @@ impl Task for PassoireFilterTask {
 
                     // TODO: bounds check
                     match data_store.color {
-                        TeamColor::YELLOW => self.update_robots(robots_yellow, robots_blue, data_store),
-                        TeamColor::BLUE => self.update_robots(robots_blue, robots_yellow, data_store),
+                        TeamColor::YELLOW => self.update_robots(robots_yellow, robots_blue, allies, enemies),
+                        TeamColor::BLUE => self.update_robots(robots_blue, robots_yellow, allies, enemies),
                     }
                 }
             }
@@ -58,10 +59,10 @@ impl Task for PassoireFilterTask {
                 None => {}
                 Some(geometry) => {
                     data_store.field = Some(Field {
-                        length : geometry.field.field_length as f32 / 1000.0,
-                        width:  geometry.field.field_width as f32 / 1000.0,
-                        goal_width : geometry.field.goal_width as f32 / 1000.0,
-                        goal_depth : geometry.field.goal_depth as f32 / 1000.0
+                        length: geometry.field.field_length as f32 / 1000.0,
+                        width: geometry.field.field_width as f32 / 1000.0,
+                        goal_width: geometry.field.goal_width as f32 / 1000.0,
+                        goal_depth: geometry.field.goal_depth as f32 / 1000.0
                     });
                 }
             }
