@@ -25,7 +25,7 @@ fn main() {
         .out_dir(PathBuf::from("src/libs/protobuf/"));
     vision_build
         .compile_protos(
-            &["proto/vision/ssl_vision_wrapper.proto"],
+            &["proto/vision/messages_robocup_ssl_wrapper.proto"],
             &["proto/vision"],
         )
         .expect("Failed to compile vision protobuf files");

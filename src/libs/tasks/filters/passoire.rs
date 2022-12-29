@@ -1,3 +1,4 @@
+use log::trace;
 use crate::libs::cli::Cli;
 use crate::libs::data::{ControllableRobot, DataStore, Field, Robot, TeamColor};
 use crate::libs::protobuf::vision_packet::SslDetectionRobot;
@@ -33,7 +34,6 @@ impl Task for PassoireFilterTask {
     fn run(&mut self, data_store: &mut DataStore) -> Result<(), String> {
 
         let (packets, allies, enemies) = (&mut data_store.vision, &mut data_store.allies, &mut data_store.enemies);
-
         for packet in packets.iter_mut() {
             match &packet.detection {
                 None => {}
@@ -54,7 +54,7 @@ impl Task for PassoireFilterTask {
                 }
             }
 
-            // TODO : Do we need to update only one time ?
+            // TODO : Move this on another filter
             match &packet.geometry {
                 None => {}
                 Some(geometry) => {
@@ -62,12 +62,13 @@ impl Task for PassoireFilterTask {
                         length: geometry.field.field_length as f32 / 1000.0,
                         width: geometry.field.field_width as f32 / 1000.0,
                         goal_width: geometry.field.goal_width as f32 / 1000.0,
-                        goal_depth: geometry.field.goal_depth as f32 / 1000.0
+                        goal_depth: geometry.field.goal_depth as f32 / 1000.0,
+                        penalty_depth: geometry.field.penalty_area_depth.unwrap_or(0) as f32 / 1000.0, // TODO : Calculate the default with arcs
+                        penalty_width: geometry.field.penalty_area_width.unwrap_or(0) as f32 / 1000.0,
                     });
                 }
             }
         }
-
         Ok(())
     }
 }

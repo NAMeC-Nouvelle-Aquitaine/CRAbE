@@ -58,8 +58,10 @@ pub struct SslDetectionFrame {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Vector2f {
+    /// X-coordinate in mm
     #[prost(float, required, tag = "1")]
     pub x: f32,
+    /// Y-coordinate in mm
     #[prost(float, required, tag = "2")]
     pub y: f32,
 }
@@ -116,24 +118,51 @@ pub struct SslFieldCircularArc {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct SslGeometryFieldSize {
+    /// Field length (distance between goal lines) in mm
     #[prost(int32, required, tag = "1")]
     pub field_length: i32,
+    /// Field width (distance between touch lines) in mm
     #[prost(int32, required, tag = "2")]
     pub field_width: i32,
+    /// Goal width (distance between inner edges of goal posts) in mm
     #[prost(int32, required, tag = "3")]
     pub goal_width: i32,
+    /// Goal depth (distance from outer goal line edge to inner goal back) in mm
     #[prost(int32, required, tag = "4")]
     pub goal_depth: i32,
+    /// Boundary width (distance from touch/goal line centers to boundary walls) in mm
     #[prost(int32, required, tag = "5")]
     pub boundary_width: i32,
+    /// Generated line segments based on the other parameters
     #[prost(message, repeated, tag = "6")]
     pub field_lines: ::prost::alloc::vec::Vec<SslFieldLineSegment>,
+    /// Generated circular arcs based on the other parameters
     #[prost(message, repeated, tag = "7")]
     pub field_arcs: ::prost::alloc::vec::Vec<SslFieldCircularArc>,
+    /// Depth of the penalty/defense area (measured between line centers) in mm
     #[prost(int32, optional, tag = "8")]
     pub penalty_area_depth: ::core::option::Option<i32>,
+    /// Width of the penalty/defense area (measured between line centers) in mm
     #[prost(int32, optional, tag = "9")]
     pub penalty_area_width: ::core::option::Option<i32>,
+    /// Radius of the center circle (measured between line centers) in mm
+    #[prost(int32, optional, tag = "10")]
+    pub center_circle_radius: ::core::option::Option<i32>,
+    /// Thickness/width of the lines on the field in mm
+    #[prost(int32, optional, tag = "11")]
+    pub line_thickness: ::core::option::Option<i32>,
+    /// Distance between the goal center and the center of the penalty mark in mm
+    #[prost(int32, optional, tag = "12")]
+    pub goal_center_to_penalty_mark: ::core::option::Option<i32>,
+    /// Goal height in mm
+    #[prost(int32, optional, tag = "13")]
+    pub goal_height: ::core::option::Option<i32>,
+    /// Ball radius in mm (note that this is a float type to represent sub-mm precision)
+    #[prost(float, optional, tag = "14")]
+    pub ball_radius: ::core::option::Option<f32>,
+    /// Max allowed robot radius in mm (note that this is a float type to represent sub-mm precision)
+    #[prost(float, optional, tag = "15")]
+    pub max_robot_radius: ::core::option::Option<f32>,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
