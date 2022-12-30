@@ -17,6 +17,8 @@ pub fn run_pipeline(mut data_store: &mut DataStore, pipeline: &mut Pipeline) {
     })
     .expect("Error setting Ctrl-C handler");
 
+    let mut min = std::f64::MAX;
+    let mut max = std::f64::MIN;
     while running.load(Ordering::SeqCst) {
         let start = Instant::now();
 
@@ -25,9 +27,14 @@ pub fn run_pipeline(mut data_store: &mut DataStore, pipeline: &mut Pipeline) {
                 .expect("TODO: some good error lmao")
         });
 
+        let elasped : f64 = start.elapsed().as_micros() as f64 / 1000.0;
+
+        if elasped > max { max = elasped; }
+        if elasped < min { min = elasped; }
+
         trace!(
-            "pipeline took {:>6} ms",
-            start.elapsed().as_micros() as f64 / 1000.0
+            "pipeline took {:>6} ms, max: {:>6} ms, min: {:>6} ms",
+            elasped, max, min
         );
     }
 }
