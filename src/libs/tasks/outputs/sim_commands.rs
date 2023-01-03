@@ -23,7 +23,8 @@ pub struct SimCommandsOutputTask {
 
 impl SimCommandsOutputTask {
     // TODO : Seperate the packet preparation to the send
-    fn send(&mut self, robots: &mut [ControllableRobot; 6]) {
+    // TODO : Refactor lines 37, 52 and 88 to 89 | Don't send feedback if no command has been sent
+    fn send(&mut self, robots: &mut [ControllableRobot; 6]) -> bool {
         let mut packet = RobotControl::default();
         for (id, robot) in robots.iter_mut().enumerate() {
             if let Some(mut cmd) = robot.command.take() {
@@ -33,7 +34,7 @@ impl SimCommandsOutputTask {
         }
 
         if packet.robot_commands.len() == 0 {
-            return;
+            return false;
         }
 
         let mut buf = Vec::new();
@@ -48,6 +49,7 @@ impl SimCommandsOutputTask {
             .expect("couldn't send data");
 
         debug!("sent order: {:?}", packet);
+        true
     }
 }
 
@@ -82,36 +84,40 @@ impl Task for SimCommandsOutputTask {
     }
 
     fn run(&mut self, data_store: &mut DataStore) -> Result<(), String> {
-        self.send(&mut data_store.allies);
-        match self.socket.recv(&mut self.buf) {
-            Ok(p_size) => {
-                let packet = RobotControlResponse::decode(Cursor::new(&self.buf[0..p_size]))
-                    .expect("Error - Decoding the packet");
+        
+        let sending = self.send(&mut data_store.allies);
+        if sending {
+            match self.socket.recv(&mut self.buf) {
+                Ok(p_size) => {
+                    let packet = RobotControlResponse::decode(Cursor::new(&self.buf[0..p_size]))
+                        .expect("Error - Decoding the packet");
 
-                for robot_feedback in packet.feedback {
-                    match data_store.allies.get_mut(robot_feedback.id as usize) {
-                        None => {
-                            error!(
-                                "Cannot assign robot feedback to our robot #{}",
-                                robot_feedback.id
-                            );
-                        }
-                        Some(robot) => {
-                            debug!(
-                                "assigned feedback {:?} to robot #{}",
-                                robot_feedback, robot_feedback.id
-                            );
-                            robot.feedback = Some(ControllableRobotFeedback {
-                                infrared: robot_feedback.dribbler_ball_contact.unwrap_or_default(),
-                            });
+                    for robot_feedback in packet.feedback {
+                        match data_store.allies.get_mut(robot_feedback.id as usize) {
+                            None => {
+                                error!(
+                                    "Cannot assign robot feedback to our robot #{}",
+                                    robot_feedback.id
+                                );
+                            }
+                            Some(robot) => {
+                                debug!(
+                                    "assigned feedback {:?} to robot #{}",
+                                    robot_feedback, robot_feedback.id
+                                );
+                                robot.feedback = Some(ControllableRobotFeedback {
+                                    infrared: robot_feedback.dribbler_ball_contact.unwrap_or_default(),
+                                });
+                            }
                         }
                     }
                 }
+                Err(e) => {
+                    error!("{}", e);
+                }
             }
-            Err(e) => {
-                error!("{}", e);
-            }
-        }
+       }
+    
         Ok(())
     }
 }
