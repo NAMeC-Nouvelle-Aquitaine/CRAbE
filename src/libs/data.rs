@@ -1,6 +1,6 @@
 use crate::libs::constants::NUMBER_OF_ROBOTS;
 use crate::libs::protobuf::game_controller_packet::Referee;
-use crate::libs::protobuf::simulation_packet::{RobotCommand};
+use crate::libs::protobuf::simulation_packet::RobotCommand;
 use crate::libs::protobuf::vision_packet::{SslDetectionRobot, SslWrapperPacket};
 use nalgebra::Point2;
 use serde::{Deserialize, Serialize};
@@ -56,9 +56,10 @@ pub struct Robot {
 }
 
 impl Robot {
+    // TODO : Move this directly on the filter ?
     pub fn update_pose(&mut self, robot_detection_packet: &SslDetectionRobot) {
-        self.position.x = robot_detection_packet.x;
-        self.position.y = robot_detection_packet.y;
+        self.position.x = robot_detection_packet.x / 1000.0;
+        self.position.y = robot_detection_packet.y / 1000.0;
         if let Some(orientation) = robot_detection_packet.orientation {
             self.orientation = orientation;
         }
@@ -78,6 +79,7 @@ pub struct ControllableRobotFeedback {
     // TODO: battery
 }
 
+// TODO : Move this directly on the filter ?
 impl ControllableRobot {
     pub fn update_pose(&mut self, robot_detection_packet: &SslDetectionRobot) {
         self.robot.update_pose(robot_detection_packet);
