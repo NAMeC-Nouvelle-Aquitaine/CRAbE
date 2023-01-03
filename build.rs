@@ -41,4 +41,16 @@ fn main() {
             &["proto/game_controller"],
         )
         .expect("Failed to compile game_controller protobuf files");
+
+    // Build Robot protobuf
+    let mut robot_build = prost_build::Config::new();
+    robot_build
+        .default_package_filename("robot_packet")
+        .out_dir(PathBuf::from("src/libs/protobuf/"));
+    robot_build
+        .compile_protos(
+            &["proto/robot/protocol_robot_catie_2022.proto"],
+            &["proto/robot"],
+        )
+        .expect("Failed to compile robot protobuf files");
 }
