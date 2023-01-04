@@ -9,7 +9,7 @@ use crate::libs::protobuf::simulation_packet::{
 };
 use crate::libs::tasks::task::Task;
 use clap::Args;
-use log::{debug, error};
+use log::{debug, error, info};
 use prost::Message;
 use serialport::SerialPort;
 use std::io::Write;
@@ -76,10 +76,13 @@ impl UsbCommandsOutputTask {
             }
             Some(packet) => {
                 let mut buf = Vec::new();
-                buf.reserve(packet.encoded_len());
+                buf.reserve(packet.encoded_len() + 1);
+                buf.push(packet.encoded_len() as u8);
                 packet.encode(&mut buf).unwrap();
 
-                match self.port.write(&buf[0..packet.encoded_len()]) {
+                info!("{}", packet.encoded_len());
+
+                match self.port.write(&buf[0..packet.encoded_len() + 1]) {
                     Ok(v) => {
                         debug!("sent order: {:?}", packet);
                     }
@@ -96,7 +99,7 @@ impl Task for UsbCommandsOutputTask {
     fn with_cli(cli: &mut Cli) -> Self {
         Self {
             port: serialport::new(cli.usb_commands.usb_commands_port.clone(), 115_200)
-                .timeout(Duration::from_millis(10))
+                .timeout(Duration::from_millis(1))
                 .open()
                 .expect("Failed to open port"),
         }
