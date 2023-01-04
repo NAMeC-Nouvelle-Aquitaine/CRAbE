@@ -4,7 +4,8 @@ use crate::libs::data::{ControllableRobot, ControllableRobotFeedback, Robot};
 use crate::libs::protobuf::robot_packet::IaToMainBoard;
 use crate::libs::protobuf::simulation_packet::robot_move_command::Command;
 use crate::libs::protobuf::simulation_packet::{
-    MoveWheelVelocity, RobotCommand, RobotControl, RobotControlResponse, RobotMoveCommand,
+    MoveLocalVelocity, MoveWheelVelocity, RobotCommand, RobotControl, RobotControlResponse,
+    RobotMoveCommand,
 };
 use crate::libs::tasks::task::Task;
 use log::{debug, error};
@@ -25,21 +26,23 @@ impl UsbCommandsOutputTask {
             if let Some(mut cmd) = robot.command.take() {
                 cmd.id = id as u32;
 
-                packet = Some(IaToMainBoard {
-                    robot_id: cmd.id,
-                    normal_speed: match cmd.move_command {
-                        None => 0.0,
-                        Some(cmd) => match cmd.command {
-                            None => 0.0,
-                            Some(cmd) => match cmd {
-                                Command::WheelVelocity(_) => 0.0,
-                                Command::LocalVelocity(v) => v.forward,
-                                Command::GlobalVelocity(_) => 0.0,
-                            },
+                let local_v: Option<MoveLocalVelocity> = match cmd.move_command {
+                    None => None,
+                    Some(cmd) => match cmd.command {
+                        None => None,
+                        Some(cmd) => match cmd {
+                            Command::WheelVelocity(_) => None,
+                            Command::LocalVelocity(v) => Some(v),
+                            Command::GlobalVelocity(_) => None,
                         },
                     },
-                    tangential_speed: 0.0,
-                    angular_speed: 0.0,
+                };
+
+                packet = Some(IaToMainBoard {
+                    robot_id: cmd.id,
+                    normal_speed: local_v.clone().unwrap_or_default().forward,
+                    tangential_speed: local_v.clone().unwrap_or_default().left,
+                    angular_speed: local_v.unwrap_or_default().angular,
                     motor_break: false,
                     kicker_cmd: match cmd.kick_angle {
                         None => 0,
