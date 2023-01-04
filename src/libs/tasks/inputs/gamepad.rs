@@ -45,10 +45,14 @@ impl Task for GamepadInputTask {
             let mut move_robot: MoveLocalVelocity = MoveLocalVelocity::default();
             if gamepad.value(Axis::RightStickY) > 0.1 || gamepad.value(Axis::RightStickY) < -0.1 {
                 move_robot.forward = gamepad.value(Axis::RightStickY);
+            } else {
+                move_robot.forward = 0.0;
             }
 
             if gamepad.value(Axis::RightStickX) > 0.1 || gamepad.value(Axis::RightStickX) < -0.1 {
                 move_robot.left = -gamepad.value(Axis::RightStickX);
+            } else {
+                move_robot.left = 0.0;
             }
 
             if gamepad.is_pressed(Button::LeftTrigger) {
