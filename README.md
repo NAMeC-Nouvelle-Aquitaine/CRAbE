@@ -48,16 +48,31 @@ sudo make install
 
 Launch grSim
 ```bash
-grsim
+grSim
 ```
 
 #### CRAbE
 
-Launch the IA
-```bash
-cargo run
+Clone the CRAbE repository in 
+```
+cd ~/project/ssl/
+git clone git@github.com:NAMeC-SSL/CRAbE.git
 ```
 
+Launch the IA with `cargo`
+```bash
+cd CRAbE/
+cargo run --bin main
+```
+
+To test that the Rust framework works, you can quickly edit the file `src/bin/main.rs` and uncomment line 34,
+and add the following use statement at the top of the file
+
+```rust
+use software::libs::tasks::examples::move_to_ball::MoveToBallExampleTask;
+```
+Open grSim and launch the previous `cargo run`
+The robots should be moving around weirdly, means it runs.
 ## MACOS
 
 TODO
