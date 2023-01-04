@@ -8,6 +8,7 @@ use crate::libs::protobuf::simulation_packet::{
     RobotMoveCommand,
 };
 use crate::libs::tasks::task::Task;
+use clap::Args;
 use log::{debug, error};
 use prost::Message;
 use serialport::SerialPort;
@@ -16,6 +17,13 @@ use std::time::Duration;
 
 pub struct UsbCommandsOutputTask {
     port: Box<dyn SerialPort>,
+}
+
+#[derive(Args, Clone)]
+pub struct UsbCommandsOutputTaskCli {
+    /// ip of the ssl vision server
+    #[arg(long, default_value = "/dev/USB0")]
+    usb_commands_port: String,
 }
 
 impl UsbCommandsOutputTask {
@@ -87,7 +95,7 @@ impl UsbCommandsOutputTask {
 impl Task for UsbCommandsOutputTask {
     fn with_cli(cli: &mut Cli) -> Self {
         Self {
-            port: serialport::new("/dev/ttys006", 115_200)
+            port: serialport::new(cli.usb_commands.usb_commands_port.clone(), 115_200)
                 .timeout(Duration::from_millis(10))
                 .open()
                 .expect("Failed to open port"),
