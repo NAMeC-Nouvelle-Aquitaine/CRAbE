@@ -3,7 +3,7 @@ use crate::libs::data::DataStore;
 use crate::libs::protobuf::simulation_packet::robot_move_command::Command;
 use crate::libs::protobuf::simulation_packet::{MoveLocalVelocity, RobotCommand, RobotMoveCommand};
 use crate::libs::tasks::task::Task;
-use gilrs::{Axis, Event, Gamepad, GamepadId, Gilrs};
+use gilrs::{Axis, Button, Event, Gamepad, GamepadId, Gilrs};
 
 pub struct GamepadInputTask {
     gilrs: Gilrs,
@@ -43,9 +43,15 @@ impl Task for GamepadInputTask {
 
             // Move Local Velocity
             let mut move_robot: MoveLocalVelocity = MoveLocalVelocity::default();
-            move_robot.forward = gamepad.value(Axis::LeftStickY);
-            move_robot.left = gamepad.value(Axis::LeftStickX);
-            move_robot.angular = gamepad.value(Axis::RightStickX);
+            move_robot.forward = gamepad.value(Axis::RightStickY);
+            move_robot.left = gamepad.value(Axis::RightStickX);
+            if gamepad.is_pressed(Button::LeftTrigger) {
+                move_robot.angular = -2.0;
+            }
+
+            if gamepad.is_pressed(Button::RightTrigger) {
+                move_robot.angular = 2.0;
+            }
 
             let command = Command::LocalVelocity(move_robot);
 
