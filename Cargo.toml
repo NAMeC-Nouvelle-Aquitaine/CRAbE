@@ -18,7 +18,8 @@ zmq = "0.10.0"
 ctrlc = "3.2.4"
 log = "0.4.17"
 env_logger = "0.10.0"
-serialport = "4.2.0"
+serialport = { git= "https://github.com/metta-systems/serialport-rs.git" }
+gilrs = "0.10.1"
 
 [build-dependencies]
 prost-build= "0.11"

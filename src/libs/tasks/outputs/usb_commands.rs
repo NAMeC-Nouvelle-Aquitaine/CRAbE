@@ -7,7 +7,7 @@ use crate::libs::protobuf::simulation_packet::{
     MoveWheelVelocity, RobotCommand, RobotControl, RobotControlResponse, RobotMoveCommand,
 };
 use crate::libs::tasks::task::Task;
-use log::debug;
+use log::{debug, error};
 use prost::Message;
 use serialport::SerialPort;
 use std::io::Write;
@@ -27,7 +27,17 @@ impl UsbCommandsOutputTask {
 
                 packet = Some(IaToMainBoard {
                     robot_id: cmd.id,
-                    normal_speed: 0.0,
+                    normal_speed: match cmd.move_command {
+                        None => 0.0,
+                        Some(cmd) => match cmd.command {
+                            None => 0.0,
+                            Some(cmd) => match cmd {
+                                Command::WheelVelocity(_) => 0.0,
+                                Command::LocalVelocity(v) => v.forward,
+                                Command::GlobalVelocity(_) => 0.0,
+                            },
+                        },
+                    },
                     tangential_speed: 0.0,
                     angular_speed: 0.0,
                     motor_break: false,
@@ -58,11 +68,14 @@ impl UsbCommandsOutputTask {
                 buf.reserve(packet.encoded_len());
                 packet.encode(&mut buf).unwrap();
 
-                self.port
-                    .write(&buf[0..packet.encoded_len()])
-                    .expect("couldn't send data");
-
-                debug!("sent order: {:?}", packet);
+                match self.port.write(&buf[0..packet.encoded_len()]) {
+                    Ok(v) => {
+                        debug!("sent order: {:?}", packet);
+                    }
+                    Err(e) => {
+                        error!("{}", e);
+                    }
+                }
             }
         }
     }
@@ -71,7 +84,7 @@ impl UsbCommandsOutputTask {
 impl Task for UsbCommandsOutputTask {
     fn with_cli(cli: &mut Cli) -> Self {
         Self {
-            port: serialport::new("/dev/ttyUSB0", 115_200)
+            port: serialport::new("/dev/ttys006", 115_200)
                 .timeout(Duration::from_millis(10))
                 .open()
                 .expect("Failed to open port"),
