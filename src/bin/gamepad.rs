@@ -27,7 +27,6 @@ fn main() {
     info!("starting up");
 
     let mut cli = Cli::parse();
-    cli.real = true;
 
     let mut data_store = DataStore::default();
 
