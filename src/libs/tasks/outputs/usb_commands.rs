@@ -20,12 +20,11 @@ pub struct UsbCommandsOutputTask {
 impl UsbCommandsOutputTask {
     // TODO : Seperate the packet preparation to the send
     fn send(&mut self, robots: &mut [ControllableRobot; 6]) {
-        let mut packet: Option<IaToMainBoard> = None;
         for (id, robot) in robots.iter_mut().enumerate() {
             if let Some(mut cmd) = robot.command.take() {
                 cmd.id = id as u32;
 
-                packet = Some(IaToMainBoard {
+                let packet = IaToMainBoard {
                     robot_id: cmd.id,
                     normal_speed: 0.0,
                     tangential_speed: 0.0,
@@ -45,15 +44,8 @@ impl UsbCommandsOutputTask {
                         None => false,
                         Some(_) => true,
                     },
-                });
-            }
-        }
+                };
 
-        match packet {
-            None => {
-                return;
-            }
-            Some(packet) => {
                 let mut buf = Vec::new();
                 buf.reserve(packet.encoded_len());
                 packet.encode(&mut buf).unwrap();
