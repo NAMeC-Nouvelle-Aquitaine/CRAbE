@@ -12,6 +12,7 @@ use software::libs::tasks::task::Task;
 #[macro_use]
 extern crate log;
 use env_logger::Env;
+use software::libs::tasks::inputs::gamepad::GamepadInputTask;
 use software::libs::tasks::inputs::zmq::ZmqInputTask;
 use software::libs::tasks::outputs::usb_commands::UsbCommandsOutputTask;
 use software::libs::tasks::outputs::zmq::ZmqOutputTask;
@@ -26,15 +27,17 @@ fn main() {
     info!("starting up");
 
     let mut cli = Cli::parse();
-    cli.real = true;
 
     let mut data_store = DataStore::default();
 
-    let mut pipeline: Pipeline = vec![if cli.real {
-        UsbCommandsOutputTask::with_cli_boxed(&mut cli)
-    } else {
-        SimCommandsOutputTask::with_cli_boxed(&mut cli)
-    }];
+    let mut pipeline: Pipeline = vec![
+        GamepadInputTask::with_cli_boxed(&mut cli),
+        if cli.real {
+            UsbCommandsOutputTask::with_cli_boxed(&mut cli)
+        } else {
+            SimCommandsOutputTask::with_cli_boxed(&mut cli)
+        },
+    ];
 
     if cli.game_controller {
         pipeline.push(GameControllerInputTask::with_cli_boxed(&mut cli))
