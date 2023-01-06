@@ -7,6 +7,7 @@ use software::libs::tasks::filters::passoire::PassoireFilterTask;
 use software::libs::tasks::inputs::game_controller::GameControllerInputTask;
 use software::libs::tasks::inputs::vision::VisionInputTask;
 use software::libs::tasks::outputs::sim_commands::SimCommandsOutputTask;
+use software::libs::tasks::outputs::usb_commands::UsbCommandsOutputTask;
 use software::libs::tasks::task::Task;
 
 #[macro_use]
@@ -37,8 +38,7 @@ fn main() {
         ZmqOutputTask::with_cli_boxed(&mut cli),
         ZmqInputTask::with_cli_boxed(&mut cli),
         if cli.real {
-            // UsbCommandsOutputTask::default_boxed()
-            unreachable!("Shouldn't happen for now");
+            UsbCommandsOutputTask::with_cli_boxed(&mut cli)
         } else {
             SimCommandsOutputTask::with_cli_boxed(&mut cli)
         },
