@@ -2,7 +2,7 @@ use crate::libs::cli::Cli;
 use crate::libs::data::{ControllableRobot, DataStore, Field, Robot, TeamColor};
 use crate::libs::protobuf::vision_packet::SslDetectionRobot;
 use crate::libs::tasks::task::Task;
-use log::trace;
+use log::{error, trace};
 
 #[derive(Default)]
 pub struct PassoireFilterTask;
@@ -18,16 +18,36 @@ impl PassoireFilterTask {
         allies
             .into_iter()
             .filter(|r| r.robot_id.is_some())
-            .for_each(|r| {
-                store_allies[r.robot_id.unwrap() as usize].update_pose(r);
-            });
+            .for_each(
+                |r| match store_allies.get_mut(r.robot_id.unwrap() as usize) {
+                    None => {
+                        error!(
+                            "invalid robot id {} in detection packet",
+                            r.robot_id.unwrap()
+                        );
+                    }
+                    Some(robot) => {
+                        robot.update_pose(r);
+                    }
+                },
+            );
 
         enemies
             .into_iter()
             .filter(|r| r.robot_id.is_some())
-            .for_each(|r| {
-                store_enemies[r.robot_id.unwrap() as usize].update_pose(r);
-            });
+            .for_each(
+                |r| match store_enemies.get_mut(r.robot_id.unwrap() as usize) {
+                    None => {
+                        error!(
+                            "invalid robot id {} in detection packet",
+                            r.robot_id.unwrap()
+                        );
+                    }
+                    Some(robot) => {
+                        robot.update_pose(r);
+                    }
+                },
+            );
     }
 }
 
