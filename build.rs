@@ -32,4 +32,8 @@ fn main() {
     compile_packet("robot_packet",
                    &["proto/robot/protocol_robot_catie_2022.proto"],
                    &["proto/robot"]);
+
+    compile_packet("tools_packet",
+                   &["proto/tools/tools.proto", "proto/tools/software.proto"],
+                   &["proto/tools"]);
 }

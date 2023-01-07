@@ -1,0 +1,41 @@
+syntax="proto3";
+
+message ToolsField {
+  float length = 1;
+  float width = 2;
+  float radius_center = 3;
+  float goal_width = 4;
+  float goal_depth = 5;
+  float penalty_width = 6;
+  float penalty_depth = 7;
+}
+
+enum ToolsColor {
+  YELLOW = 0;
+  BLUE = 1;
+}
+
+message Point {
+  float x = 1;
+  float y = 2;
+}
+
+message ToolsRobot {
+  uint32 id = 1;
+  float x = 2;
+  float y = 3;
+  float orientation = 4;
+}
+
+message ToolsBall {
+  float x = 1;
+  float y = 2;
+}
+
+message ToolsSoftwarePacket {
+  ToolsField field = 1;
+  ToolsColor color_team = 2;
+  repeated ToolsRobot allies = 3;
+  repeated ToolsRobot opponents = 4;
+  ToolsBall ball = 5;
+}

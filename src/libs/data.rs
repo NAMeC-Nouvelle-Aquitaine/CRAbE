@@ -51,6 +51,7 @@ impl Default for TeamColor {
 
 #[derive(Default, Serialize, Deserialize, Copy, Clone)]
 pub struct Robot {
+    pub id: u32,
     pub position: Point2<f32>,
     pub orientation: f32,
 }
@@ -58,6 +59,7 @@ pub struct Robot {
 impl Robot {
     // TODO : Move this directly on the filter ?
     pub fn update_pose(&mut self, robot_detection_packet: &SslDetectionRobot) {
+        self.id = robot_detection_packet.robot_id.unwrap();
         self.position.x = robot_detection_packet.x / 1000.0;
         self.position.y = robot_detection_packet.y / 1000.0;
         if let Some(orientation) = robot_detection_packet.orientation {
