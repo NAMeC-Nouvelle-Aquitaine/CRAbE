@@ -5,7 +5,7 @@ use crate::libs::protobuf::simulation_packet::{MoveLocalVelocity, RobotCommand, 
 use nalgebra::{Point2, Vector3};
 extern crate nalgebra as na;
 
-const GOTO_SPEED_MULTIPLIER: f32 = 0.003;
+const GOTO_SPEED_MULTIPLIER: f32 = 3.0;
 
 impl ControllableRobot {
     pub(crate) fn goto(&mut self, target: Vector3<f32>) -> bool {
@@ -44,7 +44,7 @@ impl ControllableRobot {
         let error_y = target_in_robot[1];
         let error_orientation = maths::angle_wrap(orientation - self.robot.orientation);
 
-        let arrived = Vector3::new(error_x, error_y, error_orientation).norm() < 115.00;
+        let arrived = Vector3::new(error_x, error_y, error_orientation).norm() < 0.115;
         let order = Vector3::new(
             GOTO_SPEED_MULTIPLIER * error_x,
             GOTO_SPEED_MULTIPLIER * error_y,
