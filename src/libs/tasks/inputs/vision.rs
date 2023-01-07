@@ -1,7 +1,7 @@
 use crate::libs::cli::Cli;
 use crate::libs::protobuf::vision_packet::SslWrapperPacket;
 use crate::libs::{data, tasks};
-use clap::{Args};
+use clap::Args;
 use data::DataStore;
 use log::{trace, warn};
 use prost::Message;
@@ -57,7 +57,7 @@ impl Task for VisionInputTask {
         }
     }
 
-    fn run(&mut self, data_store: &mut DataStore) -> Result<(), String> {
+    fn run(&mut self, data_store: &mut DataStore) {
         // clear the old packets
         data_store.vision.clear();
 
@@ -85,7 +85,5 @@ impl Task for VisionInputTask {
                 start.elapsed().as_micros()
             );
         }
-
-        Ok(())
     }
 }

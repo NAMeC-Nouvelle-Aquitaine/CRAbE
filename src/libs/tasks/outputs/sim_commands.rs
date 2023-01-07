@@ -83,8 +83,7 @@ impl Task for SimCommandsOutputTask {
         }
     }
 
-    fn run(&mut self, data_store: &mut DataStore) -> Result<(), String> {
-        
+    fn run(&mut self, data_store: &mut DataStore) {
         let sending = self.send(&mut data_store.allies);
         if sending {
             match self.socket.recv(&mut self.buf) {
@@ -106,7 +105,9 @@ impl Task for SimCommandsOutputTask {
                                     robot_feedback, robot_feedback.id
                                 );
                                 robot.feedback = Some(ControllableRobotFeedback {
-                                    infrared: robot_feedback.dribbler_ball_contact.unwrap_or_default(),
+                                    infrared: robot_feedback
+                                        .dribbler_ball_contact
+                                        .unwrap_or_default(),
                                 });
                             }
                         }
@@ -116,33 +117,30 @@ impl Task for SimCommandsOutputTask {
                     error!("{}", e);
                 }
             }
-       }
-    
-        Ok(())
+        }
     }
 }
 
 impl Drop for SimCommandsOutputTask {
     fn drop(&mut self) {
-        let mut robots: [ControllableRobot; 6] = [Robot::default(); 6]
-            .map(|r| ControllableRobot {
-                robot: r,
-                command: Some(RobotCommand {
-                    id: 0,
-                    move_command: Some(RobotMoveCommand {
-                        command: Some(Command::WheelVelocity(MoveWheelVelocity {
-                            front_right: 0.0,
-                            back_right: 0.0,
-                            back_left: 0.0,
-                            front_left: 0.0,
-                        })),
-                    }),
-                    kick_speed: Some(0.0),
-                    kick_angle: Some(0.0),
-                    dribbler_speed: Some(0.0),
+        let mut robots: [ControllableRobot; 6] = [Robot::default(); 6].map(|r| ControllableRobot {
+            robot: r,
+            command: Some(RobotCommand {
+                id: 0,
+                move_command: Some(RobotMoveCommand {
+                    command: Some(Command::WheelVelocity(MoveWheelVelocity {
+                        front_right: 0.0,
+                        back_right: 0.0,
+                        back_left: 0.0,
+                        front_left: 0.0,
+                    })),
                 }),
-                feedback: None,
-            });
+                kick_speed: Some(0.0),
+                kick_angle: Some(0.0),
+                dribbler_speed: Some(0.0),
+            }),
+            feedback: None,
+        });
         self.send(&mut robots);
     }
 }

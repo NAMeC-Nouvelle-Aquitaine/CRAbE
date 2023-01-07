@@ -36,7 +36,7 @@ impl Task for GameControllerInputTask {
         Self::default()
     }
 
-    fn run(&mut self, data_store: &mut DataStore) -> Result<(), String> {
+    fn run(&mut self, data_store: &mut DataStore) {
         let mut buf = [0u8; 4096];
         match self.socket.recv_from(&mut buf) {
             Ok((p_size, _)) => {
@@ -48,7 +48,5 @@ impl Task for GameControllerInputTask {
                 println!("Is GameController is running ?");
             }
         };
-
-        Ok(())
     }
 }

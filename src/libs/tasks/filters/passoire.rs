@@ -59,7 +59,7 @@ impl Task for PassoireFilterTask {
         Self::default()
     }
 
-    fn run(&mut self, data_store: &mut DataStore) -> Result<(), String> {
+    fn run(&mut self, data_store: &mut DataStore) {
         let (packets, allies, enemies) = (
             &mut data_store.vision,
             &mut data_store.allies,
@@ -106,6 +106,5 @@ impl Task for PassoireFilterTask {
                 }
             }
         }
-        Ok(())
     }
 }

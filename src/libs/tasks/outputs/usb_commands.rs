@@ -97,10 +97,8 @@ impl Task for UsbCommandsOutputTask {
         }
     }
 
-    fn run(&mut self, data_store: &mut DataStore) -> Result<(), String> {
+    fn run(&mut self, data_store: &mut DataStore) {
         self.send(&mut data_store.allies);
-
-        Ok(())
     }
 }
 

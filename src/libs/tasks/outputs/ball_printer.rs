@@ -14,10 +14,8 @@ impl Task for BallPrinterOutputTask {
         Self::default()
     }
 
-    fn run(&mut self, data_store: &mut DataStore) -> Result<(), String> {
+    fn run(&mut self, data_store: &mut DataStore) {
         println!("{:?}", data_store.ball);
         println!("{:?}", data_store.allies[0].robot.position);
-
-        Ok(())
     }
 }

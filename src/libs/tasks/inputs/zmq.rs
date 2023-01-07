@@ -1,5 +1,5 @@
 use crate::libs::cli::Cli;
-use crate::libs::data::{DataStore};
+use crate::libs::data::DataStore;
 use crate::libs::skills::kick::KickType;
 use crate::libs::tasks::task::Task;
 use log::{debug, error};
@@ -61,7 +61,7 @@ impl Task for ZmqInputTask {
         Self::default()
     }
 
-    fn run(&mut self, data_store: &mut DataStore) -> Result<(), String> {
+    fn run(&mut self, data_store: &mut DataStore) {
         let mut msg = zmq::Message::new();
 
         if let Ok(_) = self.socket.recv(&mut msg, DONTWAIT) {
@@ -71,8 +71,6 @@ impl Task for ZmqInputTask {
             let rep_payload = serde_json::to_string(&rep).unwrap();
             self.socket.send(rep_payload.as_str(), DONTWAIT).unwrap();
         }
-
-        Ok(())
     }
 }
 

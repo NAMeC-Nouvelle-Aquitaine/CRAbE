@@ -17,7 +17,7 @@ impl Task for MoveToBallExampleTask {
         Self::default()
     }
 
-    fn run(&mut self, data_store: &mut DataStore) -> Result<(), String> {
+    fn run(&mut self, data_store: &mut DataStore) {
         // let robot_to_ball = data_store.ball - data_store.allies[0].robot.position;
         // let angle_to_ball = robot_to_ball.y.atan2(robot_to_ball.x);
         //
@@ -45,7 +45,5 @@ impl Task for MoveToBallExampleTask {
                 (time.as_secs_f64() % (2.0 * f64::pi())) as f32,
             ));
         }
-
-        Ok(())
     }
 }

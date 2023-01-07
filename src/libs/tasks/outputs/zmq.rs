@@ -94,13 +94,11 @@ impl Task for ZmqOutputTask {
         Self::default()
     }
 
-    fn run(&mut self, data_store: &mut DataStore) -> Result<(), String> {
+    fn run(&mut self, data_store: &mut DataStore) {
         let payload = serde_json::to_string(&ZmqPacket::with_data_store(data_store))
             .expect("TODO: some meaningful message");
 
         debug!("{:?}", payload);
         self.socket.send(payload.as_str(), zmq::DONTWAIT).unwrap();
-
-        Ok(())
     }
 }

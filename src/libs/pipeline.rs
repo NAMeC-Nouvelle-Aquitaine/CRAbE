@@ -24,8 +24,7 @@ pub fn run_pipeline(mut data_store: &mut DataStore, pipeline: &mut Pipeline) {
         let start = Instant::now();
 
         pipeline.iter_mut().for_each(|task| {
-            task.run(&mut data_store)
-                .expect("TODO: some good error lmao")
+            task.run(&mut data_store);
         });
 
         sleep(Duration::from_millis(10));

@@ -15,7 +15,7 @@ impl Task for MoveForwardExampleTask {
         Self::default()
     }
 
-    fn run(&mut self, data_store: &mut DataStore) -> Result<(), String> {
+    fn run(&mut self, data_store: &mut DataStore) {
         // Create robot command
         let mut r = RobotCommand::default();
         r.id = 0;
@@ -33,7 +33,5 @@ impl Task for MoveForwardExampleTask {
         if let Some(robot) = data_store.allies.get_mut(0) {
             robot.command = Some(r);
         }
-
-        Ok(())
     }
 }

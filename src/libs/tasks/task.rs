@@ -6,7 +6,7 @@ pub trait Task {
     where
         Self: Sized;
 
-    fn run(&mut self, data_store: &mut DataStore) -> Result<(), String>;
+    fn run(&mut self, data_store: &mut DataStore);
 
     fn with_cli_boxed(cli: &mut Cli) -> Box<Self>
     where

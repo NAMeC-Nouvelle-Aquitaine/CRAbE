@@ -29,7 +29,7 @@ impl Task for GamepadInputTask {
         }
     }
 
-    fn run(&mut self, data_store: &mut DataStore) -> Result<(), String> {
+    fn run(&mut self, data_store: &mut DataStore) {
         // Examine new events
         while let Some(Event { id, event, time }) = self.gilrs.next_event() {
             println!("{:?} New event from {}: {:?}", time, id, event);
@@ -50,7 +50,7 @@ impl Task for GamepadInputTask {
                 move_robot.forward = 0.0;
             }
 
-            if gamepad.value(Axis::RightStickX).abs() > 0.2  {
+            if gamepad.value(Axis::RightStickX).abs() > 0.2 {
                 move_robot.left = -gamepad.value(Axis::RightStickX);
             } else {
                 move_robot.left = 0.0;
@@ -69,12 +69,10 @@ impl Task for GamepadInputTask {
             r.move_command = Some(RobotMoveCommand {
                 command: Some(command),
             });
-            
+
             if let Some(robot) = data_store.allies.get_mut(r.id as usize) {
                 robot.command = Some(r);
             }
         }
-
-        Ok(())
     }
 }
