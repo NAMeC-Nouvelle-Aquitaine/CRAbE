@@ -18,8 +18,8 @@ pub fn run_pipeline(mut data_store: &mut DataStore, pipeline: &mut Pipeline) {
     })
     .expect("Error setting Ctrl-C handler");
 
-    let mut min = std::f64::MAX;
-    let mut max = std::f64::MIN;
+    let mut min = f64::MAX;
+    let mut max = f64::MIN;
     while running.load(Ordering::SeqCst) {
         let start = Instant::now();
 
