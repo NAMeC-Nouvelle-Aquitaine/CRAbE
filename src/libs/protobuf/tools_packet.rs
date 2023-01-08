@@ -75,4 +75,12 @@ impl ToolsColor {
             ToolsColor::Blue => "BLUE",
         }
     }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "YELLOW" => Some(Self::Yellow),
+            "BLUE" => Some(Self::Blue),
+            _ => None,
+        }
+    }
 }

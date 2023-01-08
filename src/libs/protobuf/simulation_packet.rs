@@ -32,6 +32,15 @@ impl Team {
             Team::Blue => "BLUE",
         }
     }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "UNKNOWN" => Some(Self::Unknown),
+            "YELLOW" => Some(Self::Yellow),
+            "BLUE" => Some(Self::Blue),
+            _ => None,
+        }
+    }
 }
 /// Division denotes the current division, which influences some rules
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
@@ -51,6 +60,15 @@ impl Division {
             Division::DivUnknown => "DIV_UNKNOWN",
             Division::DivA => "DIV_A",
             Division::DivB => "DIV_B",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "DIV_UNKNOWN" => Some(Self::DivUnknown),
+            "DIV_A" => Some(Self::DivA),
+            "DIV_B" => Some(Self::DivB),
+            _ => None,
         }
     }
 }
@@ -272,6 +290,26 @@ impl SslFieldShapeType {
             SslFieldShapeType::RightFieldRightPenaltyStretch => {
                 "RightFieldRightPenaltyStretch"
             }
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "Undefined" => Some(Self::Undefined),
+            "CenterCircle" => Some(Self::CenterCircle),
+            "TopTouchLine" => Some(Self::TopTouchLine),
+            "BottomTouchLine" => Some(Self::BottomTouchLine),
+            "LeftGoalLine" => Some(Self::LeftGoalLine),
+            "RightGoalLine" => Some(Self::RightGoalLine),
+            "HalfwayLine" => Some(Self::HalfwayLine),
+            "CenterLine" => Some(Self::CenterLine),
+            "LeftPenaltyStretch" => Some(Self::LeftPenaltyStretch),
+            "RightPenaltyStretch" => Some(Self::RightPenaltyStretch),
+            "LeftFieldLeftPenaltyStretch" => Some(Self::LeftFieldLeftPenaltyStretch),
+            "LeftFieldRightPenaltyStretch" => Some(Self::LeftFieldRightPenaltyStretch),
+            "RightFieldLeftPenaltyStretch" => Some(Self::RightFieldLeftPenaltyStretch),
+            "RightFieldRightPenaltyStretch" => Some(Self::RightFieldRightPenaltyStretch),
+            _ => None,
         }
     }
 }

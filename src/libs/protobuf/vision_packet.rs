@@ -303,6 +303,26 @@ impl SslFieldShapeType {
             }
         }
     }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "Undefined" => Some(Self::Undefined),
+            "CenterCircle" => Some(Self::CenterCircle),
+            "TopTouchLine" => Some(Self::TopTouchLine),
+            "BottomTouchLine" => Some(Self::BottomTouchLine),
+            "LeftGoalLine" => Some(Self::LeftGoalLine),
+            "RightGoalLine" => Some(Self::RightGoalLine),
+            "HalfwayLine" => Some(Self::HalfwayLine),
+            "CenterLine" => Some(Self::CenterLine),
+            "LeftPenaltyStretch" => Some(Self::LeftPenaltyStretch),
+            "RightPenaltyStretch" => Some(Self::RightPenaltyStretch),
+            "LeftFieldLeftPenaltyStretch" => Some(Self::LeftFieldLeftPenaltyStretch),
+            "LeftFieldRightPenaltyStretch" => Some(Self::LeftFieldRightPenaltyStretch),
+            "RightFieldLeftPenaltyStretch" => Some(Self::RightFieldLeftPenaltyStretch),
+            "RightFieldRightPenaltyStretch" => Some(Self::RightFieldRightPenaltyStretch),
+            _ => None,
+        }
+    }
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]

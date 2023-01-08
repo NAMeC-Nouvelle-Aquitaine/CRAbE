@@ -84,6 +84,15 @@ impl Commands {
             Commands::Break => "BREAK",
         }
     }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "STOP" => Some(Self::Stop),
+            "RUN" => Some(Self::Run),
+            "BREAK" => Some(Self::Break),
+            _ => None,
+        }
+    }
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
@@ -102,6 +111,15 @@ impl Kicker {
             Kicker::NoKick => "NO_KICK",
             Kicker::Kick1 => "KICK1",
             Kicker::Kick2 => "KICK2",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "NO_KICK" => Some(Self::NoKick),
+            "KICK1" => Some(Self::Kick1),
+            "KICK2" => Some(Self::Kick2),
+            _ => None,
         }
     }
 }

@@ -32,6 +32,15 @@ impl Team {
             Team::Blue => "BLUE",
         }
     }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "UNKNOWN" => Some(Self::Unknown),
+            "YELLOW" => Some(Self::Yellow),
+            "BLUE" => Some(Self::Blue),
+            _ => None,
+        }
+    }
 }
 /// Division denotes the current division, which influences some rules
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
@@ -51,6 +60,15 @@ impl Division {
             Division::DivUnknown => "DIV_UNKNOWN",
             Division::DivA => "DIV_A",
             Division::DivB => "DIV_B",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "DIV_UNKNOWN" => Some(Self::DivUnknown),
+            "DIV_A" => Some(Self::DivA),
+            "DIV_B" => Some(Self::DivB),
+            _ => None,
         }
     }
 }
@@ -841,6 +859,69 @@ pub mod game_event {
                 Type::MultiplePlacementFailures => "MULTIPLE_PLACEMENT_FAILURES",
             }
         }
+        /// Creates an enum from field names used in the ProtoBuf definition.
+        pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+            match value {
+                "UNKNOWN_GAME_EVENT_TYPE" => Some(Self::UnknownGameEventType),
+                "BALL_LEFT_FIELD_TOUCH_LINE" => Some(Self::BallLeftFieldTouchLine),
+                "BALL_LEFT_FIELD_GOAL_LINE" => Some(Self::BallLeftFieldGoalLine),
+                "AIMLESS_KICK" => Some(Self::AimlessKick),
+                "ATTACKER_TOO_CLOSE_TO_DEFENSE_AREA" => {
+                    Some(Self::AttackerTooCloseToDefenseArea)
+                }
+                "DEFENDER_IN_DEFENSE_AREA" => Some(Self::DefenderInDefenseArea),
+                "BOUNDARY_CROSSING" => Some(Self::BoundaryCrossing),
+                "KEEPER_HELD_BALL" => Some(Self::KeeperHeldBall),
+                "BOT_DRIBBLED_BALL_TOO_FAR" => Some(Self::BotDribbledBallTooFar),
+                "BOT_PUSHED_BOT" => Some(Self::BotPushedBot),
+                "BOT_HELD_BALL_DELIBERATELY" => Some(Self::BotHeldBallDeliberately),
+                "BOT_TIPPED_OVER" => Some(Self::BotTippedOver),
+                "ATTACKER_TOUCHED_BALL_IN_DEFENSE_AREA" => {
+                    Some(Self::AttackerTouchedBallInDefenseArea)
+                }
+                "BOT_KICKED_BALL_TOO_FAST" => Some(Self::BotKickedBallTooFast),
+                "BOT_CRASH_UNIQUE" => Some(Self::BotCrashUnique),
+                "BOT_CRASH_DRAWN" => Some(Self::BotCrashDrawn),
+                "DEFENDER_TOO_CLOSE_TO_KICK_POINT" => {
+                    Some(Self::DefenderTooCloseToKickPoint)
+                }
+                "BOT_TOO_FAST_IN_STOP" => Some(Self::BotTooFastInStop),
+                "BOT_INTERFERED_PLACEMENT" => Some(Self::BotInterferedPlacement),
+                "POSSIBLE_GOAL" => Some(Self::PossibleGoal),
+                "GOAL" => Some(Self::Goal),
+                "INVALID_GOAL" => Some(Self::InvalidGoal),
+                "ATTACKER_DOUBLE_TOUCHED_BALL" => Some(Self::AttackerDoubleTouchedBall),
+                "PLACEMENT_SUCCEEDED" => Some(Self::PlacementSucceeded),
+                "PENALTY_KICK_FAILED" => Some(Self::PenaltyKickFailed),
+                "NO_PROGRESS_IN_GAME" => Some(Self::NoProgressInGame),
+                "PLACEMENT_FAILED" => Some(Self::PlacementFailed),
+                "MULTIPLE_CARDS" => Some(Self::MultipleCards),
+                "MULTIPLE_FOULS" => Some(Self::MultipleFouls),
+                "BOT_SUBSTITUTION" => Some(Self::BotSubstitution),
+                "TOO_MANY_ROBOTS" => Some(Self::TooManyRobots),
+                "CHALLENGE_FLAG" => Some(Self::ChallengeFlag),
+                "EMERGENCY_STOP" => Some(Self::EmergencyStop),
+                "UNSPORTING_BEHAVIOR_MINOR" => Some(Self::UnsportingBehaviorMinor),
+                "UNSPORTING_BEHAVIOR_MAJOR" => Some(Self::UnsportingBehaviorMajor),
+                "PREPARED" => Some(Self::Prepared),
+                "INDIRECT_GOAL" => Some(Self::IndirectGoal),
+                "CHIPPED_GOAL" => Some(Self::ChippedGoal),
+                "KICK_TIMEOUT" => Some(Self::KickTimeout),
+                "ATTACKER_TOUCHED_OPPONENT_IN_DEFENSE_AREA" => {
+                    Some(Self::AttackerTouchedOpponentInDefenseArea)
+                }
+                "ATTACKER_TOUCHED_OPPONENT_IN_DEFENSE_AREA_SKIPPED" => {
+                    Some(Self::AttackerTouchedOpponentInDefenseAreaSkipped)
+                }
+                "BOT_CRASH_UNIQUE_SKIPPED" => Some(Self::BotCrashUniqueSkipped),
+                "BOT_PUSHED_BOT_SKIPPED" => Some(Self::BotPushedBotSkipped),
+                "DEFENDER_IN_DEFENSE_AREA_PARTIALLY" => {
+                    Some(Self::DefenderInDefenseAreaPartially)
+                }
+                "MULTIPLE_PLACEMENT_FAILURES" => Some(Self::MultiplePlacementFailures),
+                _ => None,
+            }
+        }
     }
     /// the event that occurred
     #[allow(clippy::derive_partial_eq_without_eq)]
@@ -1156,6 +1237,26 @@ pub mod referee {
                 Stage::PostGame => "POST_GAME",
             }
         }
+        /// Creates an enum from field names used in the ProtoBuf definition.
+        pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+            match value {
+                "NORMAL_FIRST_HALF_PRE" => Some(Self::NormalFirstHalfPre),
+                "NORMAL_FIRST_HALF" => Some(Self::NormalFirstHalf),
+                "NORMAL_HALF_TIME" => Some(Self::NormalHalfTime),
+                "NORMAL_SECOND_HALF_PRE" => Some(Self::NormalSecondHalfPre),
+                "NORMAL_SECOND_HALF" => Some(Self::NormalSecondHalf),
+                "EXTRA_TIME_BREAK" => Some(Self::ExtraTimeBreak),
+                "EXTRA_FIRST_HALF_PRE" => Some(Self::ExtraFirstHalfPre),
+                "EXTRA_FIRST_HALF" => Some(Self::ExtraFirstHalf),
+                "EXTRA_HALF_TIME" => Some(Self::ExtraHalfTime),
+                "EXTRA_SECOND_HALF_PRE" => Some(Self::ExtraSecondHalfPre),
+                "EXTRA_SECOND_HALF" => Some(Self::ExtraSecondHalf),
+                "PENALTY_SHOOTOUT_BREAK" => Some(Self::PenaltyShootoutBreak),
+                "PENALTY_SHOOTOUT" => Some(Self::PenaltyShootout),
+                "POST_GAME" => Some(Self::PostGame),
+                _ => None,
+            }
+        }
     }
     /// These are the "fine" states of play on the field.
     #[derive(
@@ -1240,6 +1341,30 @@ pub mod referee {
                 Command::BallPlacementBlue => "BALL_PLACEMENT_BLUE",
             }
         }
+        /// Creates an enum from field names used in the ProtoBuf definition.
+        pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+            match value {
+                "HALT" => Some(Self::Halt),
+                "STOP" => Some(Self::Stop),
+                "NORMAL_START" => Some(Self::NormalStart),
+                "FORCE_START" => Some(Self::ForceStart),
+                "PREPARE_KICKOFF_YELLOW" => Some(Self::PrepareKickoffYellow),
+                "PREPARE_KICKOFF_BLUE" => Some(Self::PrepareKickoffBlue),
+                "PREPARE_PENALTY_YELLOW" => Some(Self::PreparePenaltyYellow),
+                "PREPARE_PENALTY_BLUE" => Some(Self::PreparePenaltyBlue),
+                "DIRECT_FREE_YELLOW" => Some(Self::DirectFreeYellow),
+                "DIRECT_FREE_BLUE" => Some(Self::DirectFreeBlue),
+                "INDIRECT_FREE_YELLOW" => Some(Self::IndirectFreeYellow),
+                "INDIRECT_FREE_BLUE" => Some(Self::IndirectFreeBlue),
+                "TIMEOUT_YELLOW" => Some(Self::TimeoutYellow),
+                "TIMEOUT_BLUE" => Some(Self::TimeoutBlue),
+                "GOAL_YELLOW" => Some(Self::GoalYellow),
+                "GOAL_BLUE" => Some(Self::GoalBlue),
+                "BALL_PLACEMENT_YELLOW" => Some(Self::BallPlacementYellow),
+                "BALL_PLACEMENT_BLUE" => Some(Self::BallPlacementBlue),
+                _ => None,
+            }
+        }
     }
 }
 /// List of matching proposals
@@ -1277,6 +1402,16 @@ impl MatchType {
             MatchType::GroupPhase => "GROUP_PHASE",
             MatchType::EliminationPhase => "ELIMINATION_PHASE",
             MatchType::Friendly => "FRIENDLY",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "UNKNOWN_MATCH" => Some(Self::UnknownMatch),
+            "GROUP_PHASE" => Some(Self::GroupPhase),
+            "ELIMINATION_PHASE" => Some(Self::EliminationPhase),
+            "FRIENDLY" => Some(Self::Friendly),
+            _ => None,
         }
     }
 }
