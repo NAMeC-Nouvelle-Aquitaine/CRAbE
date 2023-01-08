@@ -14,6 +14,7 @@ use software::libs::tasks::task::Task;
 extern crate log;
 use env_logger::Env;
 use software::libs::tasks::inputs::zmq::ZmqInputTask;
+use software::libs::tasks::inputs_outputs::tools::ToolsInputOutputTask;
 use software::libs::tasks::outputs::zmq::ZmqOutputTask;
 
 // TODO : Make port, address, interface for multicast to be changed
@@ -37,6 +38,7 @@ fn main() {
         // BallPrinterOutputTask::with_cli_boxed(&mut cli),
         ZmqOutputTask::with_cli_boxed(&mut cli),
         ZmqInputTask::with_cli_boxed(&mut cli),
+        ToolsInputOutputTask::with_cli_boxed(&mut cli),
         if cli.real {
             UsbCommandsOutputTask::with_cli_boxed(&mut cli)
         } else {

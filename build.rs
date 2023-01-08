@@ -13,27 +13,37 @@ fn compile_packet(filename: &str, protos: &[impl AsRef<Path>], includes: &[impl 
 }
 
 fn main() {
-    compile_packet("simulation_packet",
-                   &[
-                       "proto/simulation/ssl_simulation_control.proto",
-                       "proto/simulation/ssl_simulation_robot_control.proto",
-                       "proto/simulation/ssl_simulation_robot_feedback.proto"
-                   ],
-                   &["proto/simulation/"]);
+    compile_packet(
+        "simulation_packet",
+        &[
+            "proto/simulation/ssl_simulation_control.proto",
+            "proto/simulation/ssl_simulation_robot_control.proto",
+            "proto/simulation/ssl_simulation_robot_feedback.proto",
+        ],
+        &["proto/simulation/"],
+    );
 
-    compile_packet("vision_packet",
-                   &["proto/vision/messages_robocup_ssl_wrapper.proto"],
-                   &["proto/vision"]);
+    compile_packet(
+        "vision_packet",
+        &["proto/vision/messages_robocup_ssl_wrapper.proto"],
+        &["proto/vision"],
+    );
 
-    compile_packet("game_controller_packet",
-                   &["proto/game_controller/ssl_gc_referee_message.proto"],
-                   &["proto/game_controller"]);
+    compile_packet(
+        "game_controller_packet",
+        &["proto/game_controller/ssl_gc_referee_message.proto"],
+        &["proto/game_controller"],
+    );
 
-    compile_packet("robot_packet",
-                   &["proto/robot/protocol_robot_catie_2022.proto"],
-                   &["proto/robot"]);
+    compile_packet(
+        "robot_packet",
+        &["proto/robot/protocol_robot_catie_2022.proto"],
+        &["proto/robot"],
+    );
 
-    compile_packet("tools_packet",
-                   &["proto/tools/tools.proto", "proto/tools/software.proto"],
-                   &["proto/tools"]);
+    compile_packet(
+        "tools_packet",
+        &["proto/tools/tools.proto", "proto/tools/software.proto"],
+        &["proto/tools"],
+    );
 }

@@ -1,9 +1,11 @@
-use std::net::UdpSocket;
-use prost::Message;
 use crate::libs::cli::Cli;
 use crate::libs::data::{ControllableRobot, DataStore, Field, Robot, TeamColor};
-use crate::libs::protobuf::tools_packet::{ToolsSoftwarePacket, ToolsColor, ToolsBall, ToolsField, ToolsRobot};
+use crate::libs::protobuf::tools_packet::{
+    ToolsBall, ToolsColor, ToolsField, ToolsRobot, ToolsSoftwarePacket,
+};
 use crate::libs::tasks::task::Task;
+use prost::Message;
+use std::net::UdpSocket;
 
 const BUFFER_SIZE: usize = 4096;
 
@@ -51,17 +53,21 @@ impl From<ControllableRobot> for ToolsRobot {
 
 impl ToolsSoftwarePacket {
     fn with_data_store(value: &DataStore) -> ToolsSoftwarePacket {
-        let color: ToolsColor = if let TeamColor::BLUE = value.color { ToolsColor::Blue } else { ToolsColor::Yellow };
-        let field = ToolsField::from(value.field.unwrap());
+        let color: ToolsColor = if let TeamColor::BLUE = value.color {
+            ToolsColor::Blue
+        } else {
+            ToolsColor::Yellow
+        };
+        let field = ToolsField::from(value.field.unwrap_or_default());
 
-        let allies = value.allies.clone().map(|r| ToolsRobot::from(r));
-        let opponents = value.enemies.map(|r| ToolsRobot::from(r));
+        let allies = value.allies.clone().map(|r| ToolsRobot::from(r)).to_vec();
+        let opponents = value.enemies.map(|r| ToolsRobot::from(r)).to_vec();
 
         ToolsSoftwarePacket {
             field: Option::from(field),
             color_team: color as i32,
-            allies: vec![],
-            opponents: vec![],
+            allies,
+            opponents,
             ball: Option::from(ToolsBall {
                 x: value.ball.x,
                 y: value.ball.y,
@@ -102,4 +108,3 @@ impl Task for ToolsInputOutputTask {
         // debug!("sent order: {:?}", packet);
     }
 }
-
