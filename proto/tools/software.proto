@@ -1,6 +1,8 @@
 syntax="proto3";
 
-message ToolsField {
+package tools_packet;
+
+message Field {
   float length = 1;
   float width = 2;
   float radius_center = 3;
@@ -10,7 +12,7 @@ message ToolsField {
   float penalty_depth = 7;
 }
 
-enum ToolsColor {
+enum Color {
   YELLOW = 0;
   BLUE = 1;
 }
@@ -20,22 +22,22 @@ message Point {
   float y = 2;
 }
 
-message ToolsRobot {
+message Robot {
   uint32 id = 1;
   float x = 2;
   float y = 3;
   float orientation = 4;
 }
 
-message ToolsBall {
+message Ball {
   float x = 1;
   float y = 2;
 }
 
-message ToolsSoftwarePacket {
-  ToolsField field = 1;
-  ToolsColor color_team = 2;
-  repeated ToolsRobot allies = 3;
-  repeated ToolsRobot opponents = 4;
-  ToolsBall ball = 5;
+message SoftwarePacket {
+  Field field = 1;
+  Color color_team = 2;
+  repeated Robot allies = 3;
+  repeated Robot opponents = 4;
+  Ball ball = 5;
 }

@@ -1,8 +1,6 @@
 use crate::libs::cli::Cli;
 use crate::libs::data::{ControllableRobot, DataStore, Field, Robot, TeamColor};
-use crate::libs::protobuf::tools_packet::{
-    ToolsBall, ToolsColor, ToolsField, ToolsRobot, ToolsSoftwarePacket,
-};
+use crate::libs::protobuf::tools_packet;
 use crate::libs::tasks::task::Task;
 use prost::Message;
 use std::net::UdpSocket;
@@ -15,7 +13,7 @@ pub struct ToolsInputOutputTask {
     port: u32,
 }
 
-impl From<Field> for ToolsField {
+impl From<Field> for tools_packet::Field {
     fn from(value: Field) -> Self {
         Self {
             length: value.length,
@@ -29,7 +27,7 @@ impl From<Field> for ToolsField {
     }
 }
 
-impl From<Robot> for ToolsRobot {
+impl From<Robot> for tools_packet::Robot {
     fn from(value: Robot) -> Self {
         Self {
             id: value.id,
@@ -40,7 +38,7 @@ impl From<Robot> for ToolsRobot {
     }
 }
 
-impl From<ControllableRobot> for ToolsRobot {
+impl From<ControllableRobot> for tools_packet::Robot {
     fn from(value: ControllableRobot) -> Self {
         Self {
             id: value.robot.id,
@@ -51,24 +49,24 @@ impl From<ControllableRobot> for ToolsRobot {
     }
 }
 
-impl ToolsSoftwarePacket {
-    fn with_data_store(value: &DataStore) -> ToolsSoftwarePacket {
-        let color: ToolsColor = if let TeamColor::BLUE = value.color {
-            ToolsColor::Blue
+impl tools_packet::SoftwarePacket {
+    fn with_data_store(value: &DataStore) -> tools_packet::SoftwarePacket {
+        let color = if let TeamColor::BLUE = value.color {
+            tools_packet::Color::Blue
         } else {
-            ToolsColor::Yellow
+            tools_packet::Color::Yellow
         };
-        let field = ToolsField::from(value.field.unwrap_or_default());
+        let field = tools_packet::Field::from(value.field.unwrap_or_default());
 
-        let allies = value.allies.clone().map(|r| ToolsRobot::from(r)).to_vec();
-        let opponents = value.enemies.map(|r| ToolsRobot::from(r)).to_vec();
+        let allies = value.allies.clone().map(|r| tools_packet::Robot::from(r)).to_vec();
+        let opponents = value.enemies.map(|r| tools_packet::Robot::from(r)).to_vec();
 
-        ToolsSoftwarePacket {
+        tools_packet::SoftwarePacket {
             field: Option::from(field),
             color_team: color as i32,
             allies,
             opponents,
-            ball: Option::from(ToolsBall {
+            ball: Option::from(tools_packet::Ball {
                 x: value.ball.x,
                 y: value.ball.y,
             }),
@@ -92,7 +90,7 @@ impl Task for ToolsInputOutputTask {
     }
 
     fn run(&mut self, data_store: &mut DataStore) {
-        let mut packet = ToolsSoftwarePacket::with_data_store(data_store);
+        let mut packet = tools_packet::SoftwarePacket::with_data_store(data_store);
 
         let mut buf = Vec::new();
         buf.reserve(packet.encoded_len());

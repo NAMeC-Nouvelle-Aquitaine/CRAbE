@@ -1,6 +1,6 @@
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ToolsField {
+pub struct Field {
     #[prost(float, tag = "1")]
     pub length: f32,
     #[prost(float, tag = "2")]
@@ -26,7 +26,7 @@ pub struct Point {
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ToolsRobot {
+pub struct Robot {
     #[prost(uint32, tag = "1")]
     pub id: u32,
     #[prost(float, tag = "2")]
@@ -38,7 +38,7 @@ pub struct ToolsRobot {
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ToolsBall {
+pub struct Ball {
     #[prost(float, tag = "1")]
     pub x: f32,
     #[prost(float, tag = "2")]
@@ -46,33 +46,33 @@ pub struct ToolsBall {
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct ToolsSoftwarePacket {
+pub struct SoftwarePacket {
     #[prost(message, optional, tag = "1")]
-    pub field: ::core::option::Option<ToolsField>,
-    #[prost(enumeration = "ToolsColor", tag = "2")]
+    pub field: ::core::option::Option<Field>,
+    #[prost(enumeration = "Color", tag = "2")]
     pub color_team: i32,
     #[prost(message, repeated, tag = "3")]
-    pub allies: ::prost::alloc::vec::Vec<ToolsRobot>,
+    pub allies: ::prost::alloc::vec::Vec<Robot>,
     #[prost(message, repeated, tag = "4")]
-    pub opponents: ::prost::alloc::vec::Vec<ToolsRobot>,
+    pub opponents: ::prost::alloc::vec::Vec<Robot>,
     #[prost(message, optional, tag = "5")]
-    pub ball: ::core::option::Option<ToolsBall>,
+    pub ball: ::core::option::Option<Ball>,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
 #[repr(i32)]
-pub enum ToolsColor {
+pub enum Color {
     Yellow = 0,
     Blue = 1,
 }
-impl ToolsColor {
+impl Color {
     /// String value of the enum field names used in the ProtoBuf definition.
     ///
     /// The values are not transformed in any way and thus are considered stable
     /// (if the ProtoBuf definition does not change) and safe for programmatic use.
     pub fn as_str_name(&self) -> &'static str {
         match self {
-            ToolsColor::Yellow => "YELLOW",
-            ToolsColor::Blue => "BLUE",
+            Color::Yellow => "YELLOW",
+            Color::Blue => "BLUE",
         }
     }
     /// Creates an enum from field names used in the ProtoBuf definition.
