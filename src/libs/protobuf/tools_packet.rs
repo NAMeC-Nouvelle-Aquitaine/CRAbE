@@ -6,7 +6,7 @@ pub struct Field {
     #[prost(float, tag = "2")]
     pub width: f32,
     #[prost(float, tag = "3")]
-    pub radius_center: f32,
+    pub center_radius: f32,
     #[prost(float, tag = "4")]
     pub goal_width: f32,
     #[prost(float, tag = "5")]

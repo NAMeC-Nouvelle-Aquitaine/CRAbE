@@ -5,7 +5,7 @@ package tools_packet;
 message Field {
   float length = 1;
   float width = 2;
-  float radius_center = 3;
+  float center_radius = 3;
   float goal_width = 4;
   float goal_depth = 5;
   float penalty_width = 6;

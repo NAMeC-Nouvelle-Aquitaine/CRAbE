@@ -18,11 +18,11 @@ impl From<Field> for tools_packet::Field {
         Self {
             length: value.length,
             width: value.width,
-            radius_center: 1.0, // TODO : Calculate this
+            center_radius: value.center_radius,
             goal_width: value.goal_width,
             goal_depth: value.goal_depth,
-            penalty_width: 2.0, // TODO : Calculate this
-            penalty_depth: 1.0, // TODO : Calculate this
+            penalty_width: value.penalty_width,
+            penalty_depth: value.penalty_depth,
         }
     }
 }
@@ -58,7 +58,11 @@ impl tools_packet::SoftwarePacket {
         };
         let field = tools_packet::Field::from(value.field.unwrap_or_default());
 
-        let allies = value.allies.clone().map(|r| tools_packet::Robot::from(r)).to_vec();
+        let allies = value
+            .allies
+            .clone()
+            .map(|r| tools_packet::Robot::from(r))
+            .to_vec();
         let opponents = value.enemies.map(|r| tools_packet::Robot::from(r)).to_vec();
 
         tools_packet::SoftwarePacket {

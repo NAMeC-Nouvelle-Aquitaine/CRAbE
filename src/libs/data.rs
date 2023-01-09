@@ -25,6 +25,7 @@ pub struct Field {
     pub goal_depth: f32,
     pub penalty_depth: f32,
     pub penalty_width: f32,
+    pub center_radius: f32,
 }
 
 #[derive(Copy, Clone, Serialize, Deserialize)]
