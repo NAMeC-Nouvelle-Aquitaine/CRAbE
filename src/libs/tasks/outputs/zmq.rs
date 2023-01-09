@@ -1,7 +1,7 @@
 use crate::libs::cli::Cli;
 use crate::libs::constants::NUMBER_OF_ROBOTS;
 use crate::libs::data::{
-    ControllableRobot, ControllableRobotFeedback, DataStore, Robot, TeamColor,
+    ControllableRobot, ControllableRobotFeedback, DataStore, Field, Robot, TeamColor,
 };
 use crate::libs::tasks::task::Task;
 use log::debug;
@@ -18,6 +18,7 @@ pub struct ZmqPacket {
     pub blue_on_positive_half: bool,
     pub ball: [f32; 2],
     pub robots: ZmqPacketRobots,
+    pub field: Option<Field>,
 }
 
 #[derive(Serialize)]
@@ -70,6 +71,7 @@ impl ZmqPacket {
             blue_on_positive_half: value.blue_on_positive_half,
             ball: [value.ball.x, value.ball.y],
             robots: ZmqPacketRobots { blue, yellow },
+            field: value.field,
         }
     }
 }
