@@ -2,13 +2,13 @@
 
 ## Installation
 
-### Linux
+### Ubuntu 22.04
 
 #### Dépendances
 
 Installer les dépendances suivantes :
 ```bash
-sudo apt install protobuf-compiler curl
+sudo apt install protobuf-compiler curl libudev-dev
 ```
 
 Installer rust
