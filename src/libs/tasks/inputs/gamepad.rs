@@ -56,12 +56,8 @@ impl Task for GamepadInputTask {
                 move_robot.left = 0.0;
             }
 
-            if gamepad.is_pressed(Button::LeftTrigger) {
-                move_robot.angular = 2.0;
-            }
-
-            if gamepad.is_pressed(Button::RightTrigger) {
-                move_robot.angular = -2.0;
+            if gamepad.value(Axis::LeftStickX).abs() > 0.1 {
+                move_robot.angular = gamepad.value(Axis::LeftStickX);
             }
 
             let command = Command::LocalVelocity(move_robot);
