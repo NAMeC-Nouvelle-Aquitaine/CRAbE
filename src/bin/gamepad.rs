@@ -4,7 +4,6 @@ use software::libs::data::DataStore;
 use software::libs::pipeline::{run_pipeline, Pipeline};
 
 use software::libs::tasks::inputs::gamepad::GamepadInputTask;
-use software::libs::tasks::inputs::vision::VisionInputTask;
 use software::libs::tasks::outputs::sim_commands::SimCommandsOutputTask;
 use software::libs::tasks::outputs::usb_commands::UsbCommandsOutputTask;
 use software::libs::tasks::task::Task;
