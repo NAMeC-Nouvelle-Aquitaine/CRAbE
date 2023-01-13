@@ -63,6 +63,7 @@ impl UsbCommandsOutputTask {
                     charge: false,
                     dribbler: match cmd.dribbler_speed {
                         None => false,
+                        Some(0.0) => false,
                         Some(_) => true,
                     },
                 };
