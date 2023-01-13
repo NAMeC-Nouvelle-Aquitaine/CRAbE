@@ -45,19 +45,19 @@ impl Task for GamepadInputTask {
             // Move Local Velocity
             let mut move_robot: MoveLocalVelocity = MoveLocalVelocity::default();
             if gamepad.value(Axis::RightStickY).abs() > 0.2 {
-                move_robot.forward = gamepad.value(Axis::RightStickY);
+                move_robot.forward = gamepad.value(Axis::RightStickY) * 2.0;
             } else {
                 move_robot.forward = 0.0;
             }
 
             if gamepad.value(Axis::RightStickX).abs() > 0.2 {
-                move_robot.left = -gamepad.value(Axis::RightStickX);
+                move_robot.left = -gamepad.value(Axis::RightStickX) * 2.0;
             } else {
                 move_robot.left = 0.0;
             }
 
             if gamepad.value(Axis::LeftStickX).abs() > 0.1 {
-                move_robot.angular = gamepad.value(Axis::LeftStickX);
+                move_robot.angular = gamepad.value(Axis::LeftStickX) * -3.14;
             }
 
             let command = Command::LocalVelocity(move_robot);

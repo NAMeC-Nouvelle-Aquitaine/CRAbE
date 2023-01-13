@@ -43,13 +43,13 @@ impl Task for VisionInputTask {
         socket
             .join_multicast_v4(&ipv4, &Ipv4Addr::UNSPECIFIED)
             .expect("Error to join multicast group");
-        socket
-            .set_read_timeout(Some(Duration::from_millis(15)))
-            .expect("Failed to set read timeout");
-
         // socket
-        //     .set_nonblocking(true)
-        //     .expect("Failed to set non blocking");
+        //     .set_read_timeout(Some(Duration::from_millis(15)))
+        //     .expect("Failed to set read timeout");
+
+        socket
+            .set_nonblocking(true)
+            .expect("Failed to set non blocking");
 
         Self {
             socket,
