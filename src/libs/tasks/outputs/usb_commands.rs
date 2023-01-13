@@ -45,11 +45,21 @@ impl UsbCommandsOutputTask {
                     },
                 };
 
+                let forward = local_v.clone().unwrap_or_default().forward;
+                let left = local_v.clone().unwrap_or_default().left;
+                let angular = local_v.unwrap_or_default().angular;
+
+                if forward.abs() >= 3.0 || left.abs() >= 3.0 || angular.abs() >= 5.0 {
+                    error!("ORDER WAS OUT OF BOUNDS !");
+                    continue;
+                }
+
+
                 let packet = IaToMainBoard {
                     robot_id: cmd.id,
-                    normal_speed: local_v.clone().unwrap_or_default().forward,
-                    tangential_speed: local_v.clone().unwrap_or_default().left,
-                    angular_speed: local_v.unwrap_or_default().angular,
+                    normal_speed: forward,
+                    tangential_speed: left,
+                    angular_speed: angular,
                     motor_break: false,
                     kicker_cmd: match cmd.kick_angle {
                         None => 0,
@@ -73,11 +83,9 @@ impl UsbCommandsOutputTask {
                 buf.push(packet.encoded_len() as u8);
                 packet.encode(&mut buf).unwrap();
 
-                info!("{}", packet.encoded_len());
-
                 match self.port.write(&buf[0..packet.encoded_len() + 1]) {
                     Ok(v) => {
-                        debug!("sent order: {:?}", packet);
+                        debug!("sent order: {:#?}", packet);
                     }
                     Err(e) => {
                         error!("{}", e);

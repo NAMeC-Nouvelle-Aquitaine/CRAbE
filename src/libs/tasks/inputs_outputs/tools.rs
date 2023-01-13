@@ -119,6 +119,7 @@ impl Task for ToolsInputOutputTask {
 
                 match packet.commands {
                     Some(command) => {
+                        dbg!("{}", &command);
                         let mut r = RobotCommand::default();
                         let mut move_robot = MoveLocalVelocity::default();
 
@@ -127,7 +128,7 @@ impl Task for ToolsInputOutputTask {
                         move_robot.angular = command.angular_speed;
 
                         if command.dribble {
-                            r.dribbler_speed = Some(1.0);
+                            r.dribbler_speed = Some(2.0);
                         }
 
                         r.move_command = Some(RobotMoveCommand {
