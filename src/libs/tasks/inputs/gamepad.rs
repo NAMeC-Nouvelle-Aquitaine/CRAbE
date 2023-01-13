@@ -44,20 +44,24 @@ impl Task for GamepadInputTask {
 
             // Move Local Velocity
             let mut move_robot: MoveLocalVelocity = MoveLocalVelocity::default();
-            if gamepad.value(Axis::RightStickY).abs() > 0.2 {
-                move_robot.forward = gamepad.value(Axis::RightStickY) * 2.0;
+            if gamepad.value(Axis::LeftStickY).abs() > 0.2 {
+                move_robot.forward = gamepad.value(Axis::LeftStickY) * 2.0;
             } else {
                 move_robot.forward = 0.0;
             }
 
-            if gamepad.value(Axis::RightStickX).abs() > 0.2 {
-                move_robot.left = -gamepad.value(Axis::RightStickX) * 2.0;
+            if gamepad.value(Axis::LeftStickX).abs() > 0.2 {
+                move_robot.left = -gamepad.value(Axis::LeftStickX) * 2.0;
             } else {
                 move_robot.left = 0.0;
             }
 
-            if gamepad.value(Axis::LeftStickX).abs() > 0.1 {
-                move_robot.angular = gamepad.value(Axis::LeftStickX) * -3.14;
+            if gamepad.value(Axis::RightStickX).abs() > 0.1 {
+                move_robot.angular = gamepad.value(Axis::RightStickX) * -3.14;
+            }
+
+            if gamepad.is_pressed(Button::LeftTrigger) {
+                r.dribbler_speed = Some(1.0);
             }
 
             let command = Command::LocalVelocity(move_robot);
