@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+// TODO : Rename this packet
+package tools_packet;
+
+message Commands {
+  float normal_speed = 1;
+  float tangent_speed = 2;
+  float angular_speed = 3;
+  // TODO : Pass float instead !
+  bool dribble = 4;
+}
+
+message ToolsPacket {
+  Commands commands = 1; // TODO: add repeated here
+}

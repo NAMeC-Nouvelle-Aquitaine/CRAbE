@@ -1,5 +1,25 @@
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
+pub struct Commands {
+    #[prost(float, tag = "1")]
+    pub normal_speed: f32,
+    #[prost(float, tag = "2")]
+    pub tangent_speed: f32,
+    #[prost(float, tag = "3")]
+    pub angular_speed: f32,
+    /// TODO : Pass float instead !
+    #[prost(bool, tag = "4")]
+    pub dribble: bool,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ToolsPacket {
+    /// TODO: add repeated here
+    #[prost(message, optional, tag = "1")]
+    pub commands: ::core::option::Option<Commands>,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Field {
     #[prost(float, tag = "1")]
     pub length: f32,

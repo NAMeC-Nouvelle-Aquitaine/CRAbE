@@ -1,8 +1,13 @@
 use crate::libs::cli::Cli;
 use crate::libs::data::{ControllableRobot, DataStore, Field, Robot, TeamColor};
+use crate::libs::protobuf::simulation_packet::robot_move_command::Command::LocalVelocity;
+use crate::libs::protobuf::simulation_packet::{MoveLocalVelocity, RobotCommand, RobotMoveCommand};
 use crate::libs::protobuf::tools_packet;
+use crate::libs::protobuf::tools_packet::{Commands, ToolsPacket};
 use crate::libs::tasks::task::Task;
+use clap::Command;
 use prost::Message;
+use std::io::Cursor;
 use std::net::UdpSocket;
 
 const BUFFER_SIZE: usize = 4096;
@@ -80,7 +85,7 @@ impl tools_packet::SoftwarePacket {
 
 impl Task for ToolsInputOutputTask {
     fn with_cli(cli: &mut Cli) -> Self {
-        let socket = UdpSocket::bind("0.0.0.0:0").expect("Failed to bind the UDP Socket");
+        let socket = UdpSocket::bind("127.0.0.1:10101").expect("Failed to bind the UDP Socket");
 
         socket
             .set_nonblocking(true)
@@ -106,6 +111,39 @@ impl Task for ToolsInputOutputTask {
                 format!("127.0.0.1:{}", self.port),
             )
             .expect("couldn't send data");
+
+        match self.socket.recv(&mut self.buf) {
+            Ok(p_size) => {
+                let packet = ToolsPacket::decode(Cursor::new(&self.buf[0..p_size]))
+                    .expect("Error - Decoding the packet");
+
+                match packet.commands {
+                    Some(command) => {
+                        let mut r = RobotCommand::default();
+                        let mut move_robot = MoveLocalVelocity::default();
+
+                        move_robot.forward = command.normal_speed;
+                        move_robot.left = command.tangent_speed;
+                        move_robot.angular = command.angular_speed;
+
+                        if command.dribble {
+                            r.dribbler_speed = Some(1.0);
+                        }
+
+                        r.move_command = Some(RobotMoveCommand {
+                            command: Some(LocalVelocity(move_robot)),
+                        });
+
+                        if let Some(robot) = data_store.allies.get_mut(r.id as usize) {
+                            robot.command = Some(r);
+                        }
+                    }
+                    _ => {}
+                }
+                println!("receive");
+            }
+            Err(_e) => {}
+        }
 
         // debug!("sent order: {:?}", packet);
     }
