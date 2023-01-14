@@ -40,11 +40,10 @@ pub enum Command {
 
 #[derive(Deserialize)]
 pub struct ZmqInputTaskReq {
-    key: String, // TODO : Remove this key
     color: String,
     number: i32,
     // command: String,
-    params: Command,
+    params: Command, // TODO : Send multiple commands at the same time
 }
 
 #[derive(Serialize)]
