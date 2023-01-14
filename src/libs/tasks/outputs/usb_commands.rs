@@ -21,9 +21,9 @@ pub struct UsbCommandsOutputTask {
 
 #[derive(Args, Clone)]
 pub struct UsbCommandsOutputTaskCli {
-    /// ip of the ssl vision server
+    /// USB port of the mainboard
     #[arg(long, default_value = "/dev/USB0")]
-    usb_commands_port: String,
+    usb_port: String,
 }
 
 impl UsbCommandsOutputTask {
@@ -91,7 +91,7 @@ impl UsbCommandsOutputTask {
 impl Task for UsbCommandsOutputTask {
     fn with_cli(cli: &mut Cli) -> Self {
         Self {
-            port: serialport::new(cli.usb_commands.usb_commands_port.clone(), 115_200)
+            port: serialport::new(cli.usb_commands.usb_port.clone(), 115_200)
                 .timeout(Duration::from_millis(1))
                 .open()
                 .expect("Failed to open port"),

@@ -55,13 +55,13 @@ impl SimCommandsOutputTask {
 
 #[derive(Args)]
 pub struct SimCommandsOutputTaskCli {
-    /// blue team output port
+    /// blue team simulation output port
     #[arg(long, default_value_t = 10301)]
-    sim_commands_blue_port: u32,
+    sim_blue_port: u32,
 
-    /// blue team output port
+    /// blue team simulation output port
     #[arg(long, default_value_t = 10302)]
-    sim_commands_yellow_port: u32,
+    sim_yellow_port: u32,
 }
 
 impl Task for SimCommandsOutputTask {
@@ -75,9 +75,9 @@ impl Task for SimCommandsOutputTask {
         Self {
             socket,
             port: if cli.y {
-                cli.sim_commands.sim_commands_yellow_port
+                cli.sim_commands.sim_yellow_port
             } else {
-                cli.sim_commands.sim_commands_blue_port
+                cli.sim_commands.sim_blue_port
             },
             buf: [0u8; BUFFER_SIZE],
         }
