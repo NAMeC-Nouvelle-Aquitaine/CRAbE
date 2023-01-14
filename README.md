@@ -75,7 +75,7 @@ Open grSim and launch the previous `cargo run`
 The robots should be moving around weirdly, means it runs.
 ## MACOS
 
-TODO
+TODO :)
 
 ## Windows
 
