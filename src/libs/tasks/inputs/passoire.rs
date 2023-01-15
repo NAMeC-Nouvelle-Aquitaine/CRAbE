@@ -95,7 +95,7 @@ impl Task for VisionGcFilterInputTask {
 
     fn run(&mut self, data_store: &mut DataStore) {
         let (allies, enemies) = (&mut data_store.allies, &mut data_store.enemies);
-        while let Ok(packet) = self.rx.recv() {
+        while let Ok(packet) = self.rx.try_recv() {
             match &packet.detection {
                 None => {}
                 Some(detection_frame) => {
