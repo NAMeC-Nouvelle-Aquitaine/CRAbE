@@ -27,7 +27,7 @@ pub fn run_pipeline(mut data_store: &mut DataStore, pipeline: &mut Pipeline) {
             task.run(&mut data_store);
         });
 
-        sleep(Duration::from_millis((Duration::from_millis(16).as_millis() - start.elapsed().as_millis()) as u64));
+        sleep(Duration::from_millis((Duration::from_millis(15).as_millis() - start.elapsed().as_millis()) as u64));
 
         let elasped: f64 = start.elapsed().as_micros() as f64 / 1000.0;
 
