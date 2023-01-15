@@ -23,7 +23,7 @@ fn main() {
 
     let mut data_store = DataStore::default();
 
-    let mut pipeline: Pipeline = vec![
+    let mut pipeline: Pipeline<dyn Task> = vec![
         GamepadInputTask::with_cli_boxed(&mut cli),
         if cli.real {
             UsbCommandsOutputTask::with_cli_boxed(&mut cli)

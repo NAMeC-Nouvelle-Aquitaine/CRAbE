@@ -5,5 +5,4 @@ pub mod pipeline;
 pub mod protobuf;
 pub mod skills;
 pub mod tasks;
-pub mod utils;
 pub mod constants;

@@ -2,7 +2,7 @@ use crate::libs::cli::Cli;
 use crate::libs::data::DataStore;
 use crate::libs::skills::kick::KickType;
 use crate::libs::tasks::task::Task;
-use log::{debug, error};
+use log::{debug};
 use serde::{Deserialize, Serialize};
 use zmq::{Socket, DONTWAIT};
 
@@ -33,8 +33,6 @@ pub enum Command {
     // #[serde(rename(deserialize = "control"))]
     Control { dx: f32, dy: f32, dturn: f32 },
     // #[serde(rename(deserialize = "led"))]
-    Leds { r: u8, g: u8, b: u8 },
-
     Dribble { speed: f32 },
 }
 
@@ -97,10 +95,6 @@ fn process_command(command: ZmqInputTaskReq, data_store: &mut DataStore) -> ZmqI
                 data_store.allies[command.number as usize].control(dx, dy, dturn);
                 response.succeeded = true;
                 response.message = "Ok".to_string();
-            }
-            Command::Leds { .. } => {
-                error!("ROBOTS DON'T EVEN HAVE LEDS");
-                response.message = "Robots don't have leds ..".to_string();
             }
             Command::Dribble { speed } => {
                 data_store.allies[command.number as usize].dribble(speed);

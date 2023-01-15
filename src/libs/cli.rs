@@ -1,4 +1,4 @@
-use crate::libs::tasks::inputs::vision::VisionInputTaskCli;
+use crate::inputs_outputs::vision::VisionCli;
 use crate::libs::tasks::outputs::sim_commands::SimCommandsOutputTaskCli;
 use crate::libs::tasks::outputs::usb_commands::UsbCommandsOutputTaskCli;
 use clap::Parser;
@@ -20,7 +20,7 @@ pub struct Cli {
 
     #[command(flatten)]
     #[command(next_help_heading = "vision")]
-    pub vision: VisionInputTaskCli,
+    pub vision: VisionCli,
 
     #[command(flatten)]
     #[command(next_help_heading = "sim commands")]

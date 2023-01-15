@@ -4,13 +4,12 @@ use crate::libs::protobuf::tools_packet;
 use crate::libs::tasks::task::Task;
 use prost::Message;
 use std::net::UdpSocket;
-
-const BUFFER_SIZE: usize = 4096;
+use std::time::Instant;
 
 pub struct ToolsInputOutputTask {
     socket: UdpSocket,
-    buf: [u8; BUFFER_SIZE],
     port: u32,
+    last_send: Instant,
 }
 
 impl From<Field> for tools_packet::Field {
@@ -79,7 +78,7 @@ impl tools_packet::SoftwarePacket {
 }
 
 impl Task for ToolsInputOutputTask {
-    fn with_cli(cli: &mut Cli) -> Self {
+    fn with_cli(_cli: &mut Cli) -> Self {
         let socket = UdpSocket::bind("0.0.0.0:0").expect("Failed to bind the UDP Socket");
 
         socket
@@ -89,24 +88,25 @@ impl Task for ToolsInputOutputTask {
         Self {
             socket,
             port: 10100, // TODO : Make cli port
-            buf: [0u8; BUFFER_SIZE],
+            last_send: Instant::now(),
         }
     }
 
     fn run(&mut self, data_store: &mut DataStore) {
-        let mut packet = tools_packet::SoftwarePacket::with_data_store(data_store);
+        if self.last_send.elapsed().as_millis() > 16  {
+            self.last_send = Instant::now();
+            let packet = tools_packet::SoftwarePacket::with_data_store(data_store);
 
-        let mut buf = Vec::new();
-        buf.reserve(packet.encoded_len());
-        packet.encode(&mut buf).unwrap();
+            let mut buf = Vec::new();
+            buf.reserve(packet.encoded_len());
+            packet.encode(&mut buf).unwrap();
 
-        self.socket
-            .send_to(
-                &buf[0..packet.encoded_len()],
-                format!("127.0.0.1:{}", self.port),
-            )
-            .expect("couldn't send data");
-
-        // debug!("sent order: {:?}", packet);
+            self.socket
+                .send_to(
+                    &buf[0..packet.encoded_len()],
+                    format!("127.0.0.1:{}", self.port),
+                )
+                .expect("couldn't send data");
+        }
     }
 }
