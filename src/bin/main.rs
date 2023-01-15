@@ -28,7 +28,7 @@ fn main() {
 
     let mut data_store = DataStore::default();
 
-    let mut pipeline: Pipeline = vec![
+    let mut pipeline: Pipeline<dyn Task> = vec![
         // VisionInputTask::with_cli_boxed(&mut cli),
         VisionGcFilterInputTask::with_cli_boxed(&mut cli),
         // MoveToBallExampleTask::with_cli_boxed(&mut cli),

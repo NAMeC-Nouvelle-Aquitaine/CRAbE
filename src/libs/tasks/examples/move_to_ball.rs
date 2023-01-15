@@ -1,6 +1,5 @@
 use crate::libs::cli::Cli;
 use crate::libs::data::DataStore;
-use crate::libs::skills::kick::KickType;
 use crate::libs::tasks::task::Task;
 use log::info;
 use nalgebra::{RealField, Vector3};

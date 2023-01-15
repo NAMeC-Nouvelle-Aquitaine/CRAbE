@@ -7,9 +7,9 @@ use std::sync::Arc;
 use std::thread::sleep;
 use std::time::{Duration, Instant};
 
-pub type Pipeline = Vec<Box<dyn Task>>;
+pub type Pipeline<T> = Vec<Box<T>>;
 
-pub fn run_pipeline(mut data_store: &mut DataStore, pipeline: &mut Pipeline) {
+pub fn run_pipeline(mut data_store: &mut DataStore, pipeline: &mut Pipeline<dyn Task>) {
     let running = Arc::new(AtomicBool::new(true));
     let r = running.clone();
 

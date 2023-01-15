@@ -1,25 +1,17 @@
 use crate::libs::cli::Cli;
-use crate::libs::data::{ControllableRobot, Field, Robot, TeamColor};
-use crate::libs::protobuf::vision_packet::{SslDetectionRobot, SslWrapperPacket};
+use crate::libs::protobuf::vision_packet::{SslWrapperPacket};
 use crate::libs::{data, tasks};
-use clap::Args;
 use data::DataStore;
-use log::{error, log, trace, warn};
-use prost::Message;
-use std::io::Cursor;
-use std::net::{Ipv4Addr, UdpSocket};
-use std::str::FromStr;
 use std::sync::mpsc;
-use std::sync::mpsc::{Receiver, Sender};
+use std::sync::mpsc::Receiver;
 use std::thread::JoinHandle;
-use std::time::{Duration, Instant};
+use log::info;
 use tasks::task::Task;
 use crate::filters::detections::DetectionFilter;
 use crate::filters::filter::FilterTask;
 use crate::filters::geometry::GeometryFilter;
 use crate::inputs_outputs::vision::Vision;
-use crate::libs::constants::NUMBER_OF_ROBOTS;
-use crate::libs::protobuf::tools_packet::Ball;
+use crate::libs::pipeline::Pipeline;
 
 // TODO : Make port, address, interface for multicast to be changed
 
@@ -29,10 +21,10 @@ pub struct FilterStore {
 }
 
 pub struct VisionGcFilterInputTask {
-    vision_thread: JoinHandle<()>,
+    // vision_thread: JoinHandle<()>,
     filter_store: FilterStore,
     pub(crate) rx : Receiver<SslWrapperPacket>,
-    pipeline: Vec<Box<dyn FilterTask>>,
+    pipeline: Pipeline<dyn FilterTask>,
 }
 
 impl Task for VisionGcFilterInputTask {
@@ -40,7 +32,9 @@ impl Task for VisionGcFilterInputTask {
         let (tx, rx) = mpsc::channel::<SslWrapperPacket>();
 
         let mut vision = Vision::with_cli(tx, cli);
-        let vision_thread = std::thread::spawn(move || {
+        std::thread::spawn(move || {
+            info!("vision thread started");
+
             loop {
                 vision.run();
             }
@@ -48,12 +42,12 @@ impl Task for VisionGcFilterInputTask {
 
         let filter_store = FilterStore::default();
 
-        let task_pipeline: Vec<Box<dyn FilterTask>> = vec![
+        let task_pipeline: Pipeline<dyn FilterTask> = vec![
             GeometryFilter::with_cli(&mut cli),
             DetectionFilter::with_cli(&mut cli),
         ];
 
-        Self { vision_thread, rx, filter_store, pipeline: task_pipeline}
+        Self { rx, filter_store, pipeline: task_pipeline}
     }
 
     fn run(&mut self, data_store: &mut DataStore) {
