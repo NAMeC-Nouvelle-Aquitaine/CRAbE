@@ -4,7 +4,6 @@ use crate::libs::{data, tasks};
 use data::DataStore;
 use std::sync::mpsc;
 use std::sync::mpsc::Receiver;
-use std::thread::JoinHandle;
 use log::info;
 use tasks::task::Task;
 use crate::filters::detections::DetectionFilter;
@@ -12,8 +11,6 @@ use crate::filters::filter::FilterTask;
 use crate::filters::geometry::GeometryFilter;
 use crate::inputs_outputs::vision::Vision;
 use crate::libs::pipeline::Pipeline;
-
-// TODO : Make port, address, interface for multicast to be changed
 
 #[derive(Default)]
 pub struct FilterStore {
@@ -51,11 +48,11 @@ impl Task for VisionGcFilterInputTask {
     }
 
     fn run(&mut self, data_store: &mut DataStore) {
+        // TODO : Here ?
+        self.filter_store.vision_packet.clear();
         // TODO : Do we want to put on a task ?
         // TODO : Do we want to put a max recv packet ?
-        while let Ok(packet) = self.rx.try_recv() {
-            self.filter_store.vision_packet.push(packet);
-        }
+        self.filter_store.vision_packet.extend(self.rx.try_iter());
 
         for task in &self.pipeline {
             task.step(&mut self.filter_store, data_store);

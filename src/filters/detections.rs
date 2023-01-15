@@ -52,7 +52,7 @@ impl DetectionFilter {
 }
 
 impl FilterTask for DetectionFilter {
-    fn with_cli(cli: &mut Cli) -> Box<Self> {
+    fn with_cli(_cli: &mut Cli) -> Box<Self> {
         Box::new(Self {})
     }
 

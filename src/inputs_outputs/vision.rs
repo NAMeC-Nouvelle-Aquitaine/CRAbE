@@ -7,6 +7,7 @@ use prost::Message;
 use crate::libs::cli::Cli;
 use crate::libs::protobuf::vision_packet::SslWrapperPacket;
 
+// TODO : Make port, address, interface for multicast to be changed
 // TODO : Move this in constant
 const BUFFER_SIZE: usize = 4096;
 

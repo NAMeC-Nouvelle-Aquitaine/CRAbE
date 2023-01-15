@@ -6,7 +6,7 @@ use crate::libs::tasks::inputs::input::FilterStore;
 pub struct GeometryFilter;
 
 impl FilterTask for GeometryFilter {
-    fn with_cli(cli: &mut Cli) -> Box<Self> {
+    fn with_cli(_cli: &mut Cli) -> Box<Self> {
         Box::new(Self {})
     }
 
