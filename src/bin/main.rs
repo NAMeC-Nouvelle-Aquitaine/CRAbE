@@ -12,12 +12,10 @@ use software::libs::tasks::task::Task;
 extern crate log;
 use env_logger::Env;
 use software::libs::tasks::examples::pass::PassExampleTask;
-use software::libs::tasks::inputs::passoire::VisionGcFilterInputTask;
+use software::libs::tasks::inputs::input::VisionGcFilterInputTask;
 use software::libs::tasks::inputs::zmq::ZmqInputTask;
 use software::libs::tasks::inputs_outputs::tools::ToolsInputOutputTask;
 use software::libs::tasks::outputs::zmq::ZmqOutputTask;
-
-// TODO : Make port, address, interface for multicast to be changed
 
 fn main() {
     let env = Env::default()
@@ -32,7 +30,6 @@ fn main() {
 
     let mut pipeline: Pipeline = vec![
         // VisionInputTask::with_cli_boxed(&mut cli),
-        // PassoireFilterTask::with_cli_boxed(&mut cli),
         VisionGcFilterInputTask::with_cli_boxed(&mut cli),
         // MoveToBallExampleTask::with_cli_boxed(&mut cli),
         // PassExampleTask::with_cli_boxed(&mut cli),

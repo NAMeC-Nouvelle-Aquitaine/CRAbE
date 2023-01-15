@@ -4,3 +4,4 @@
 // #![deny(clippy::all)]
 pub mod libs;
 pub mod inputs_outputs;
+pub mod filters;

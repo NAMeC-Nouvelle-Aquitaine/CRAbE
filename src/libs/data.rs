@@ -11,8 +11,7 @@ pub struct DataStore {
     pub blue_on_positive_half: bool,
     pub ball: Point2<f32>,
     pub allies: [ControllableRobot; NUMBER_OF_ROBOTS],
-    pub enemies: [Robot; NUMBER_OF_ROBOTS],
-    pub vision: Vec<SslWrapperPacket>,
+    pub enemies: [Robot; NUMBER_OF_ROBOTS], // TODO : Rename opponents
     pub game_controller: Option<Referee>,
     pub field: Option<Field>,
 }
