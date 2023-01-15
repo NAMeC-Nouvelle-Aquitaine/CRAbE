@@ -1,0 +1,15 @@
+syntax="proto3";
+
+package tools_packet;
+
+message Point {
+  float x = 1;
+  float y = 2;
+}
+
+message RGBA {
+  int32 red = 1;
+  int32 green = 2;
+  int32 blue = 3;
+  int32 alpha = 4;
+}

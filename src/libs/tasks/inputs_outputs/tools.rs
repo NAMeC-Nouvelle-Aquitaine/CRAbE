@@ -4,6 +4,7 @@ use crate::libs::protobuf::tools_packet;
 use crate::libs::tasks::task::Task;
 use prost::Message;
 use std::net::UdpSocket;
+use crate::libs::protobuf::tools_packet::AnnotationWrapper;
 
 const BUFFER_SIZE: usize = 4096;
 
@@ -74,6 +75,8 @@ impl tools_packet::SoftwarePacket {
                 x: value.ball.x,
                 y: value.ball.y,
             }),
+
+            annotations: Vec::new(),
         }
     }
 }

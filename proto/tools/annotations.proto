@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package tools_packet;
+
+message AnnotationPoint {
+  float x = 1;
+  float y = 2;
+}
+
+message AnnotationCircle {
+  float radius = 1;
+  Point center = 2;
+}
+
+message AnnotationArrow {
+  Point source = 1;
+  Point destination = 2;
+}
+
+message AnnotationLine {
+  Point source = 1;
+  Point destination = 2;
+}
+
+message Annotation {
+  oneof type {
+    AnnotationPoint point = 1;
+    AnnotationCircle circle = 2;
+    AnnotationLine line = 3;
+    AnnotationArrow arrow = 4;
+  }
+  RGBA fill_color = 5;
+  RGBA shape_color = 6;
+}
+
+message Add {
+  uint32 id = 1;
+  Annotation annotation = 2;
+}
+
+message Remove {
+  uint32 id = 1;
+}
+
+message RemoveMultiple  {
+  repeated int32 id = 1;
+}
+
+message Clear {}
+
+message AnnotationWrapper {
+  oneof actions {
+    Add add = 1;
+    Remove remove = 2;
+    RemoveMultiple remove_multiple = 3;
+    Clear clear = 4;
+  }
+}

@@ -1,5 +1,7 @@
 syntax="proto3";
 
+import "annotations.proto";
+
 package tools_packet;
 
 message Field {
@@ -15,11 +17,6 @@ message Field {
 enum Color {
   YELLOW = 0;
   BLUE = 1;
-}
-
-message Point {
-  float x = 1;
-  float y = 2;
 }
 
 message Robot {
@@ -40,4 +37,5 @@ message SoftwarePacket {
   repeated Robot allies = 3;
   repeated Robot opponents = 4;
   Ball ball = 5;
+  repeated AnnotationWrapper annotations = 6;
 }
