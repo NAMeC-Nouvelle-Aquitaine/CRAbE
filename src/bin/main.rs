@@ -3,7 +3,6 @@ use software::libs::cli::Cli;
 use software::libs::data::DataStore;
 use software::libs::pipeline::{run_pipeline, Pipeline};
 
-use software::libs::tasks::inputs::game_controller::GameControllerInputTask;
 use software::libs::tasks::outputs::sim_commands::SimCommandsOutputTask;
 use software::libs::tasks::outputs::usb_commands::UsbCommandsOutputTask;
 use software::libs::tasks::task::Task;
@@ -29,9 +28,7 @@ fn main() {
 
     let mut pipeline: Pipeline<dyn Task> = vec![
         VisionGcFilterInputTask::with_cli_boxed(&mut cli),
-        // MoveToBallExampleTask::with_cli_boxed(&mut cli),
         // PassExampleTask::with_cli_boxed(&mut cli),
-        // BallPrinterOutputTask::with_cli_boxed(&mut cli),
         ZmqOutputTask::with_cli_boxed(&mut cli),
         ZmqInputTask::with_cli_boxed(&mut cli),
         ToolsInputOutputTask::with_cli_boxed(&mut cli),
@@ -41,10 +38,6 @@ fn main() {
             SimCommandsOutputTask::with_cli_boxed(&mut cli)
         },
     ];
-
-    if cli.game_controller {
-        pipeline.push(GameControllerInputTask::with_cli_boxed(&mut cli))
-    }
 
     run_pipeline(&mut data_store, &mut pipeline);
 }
