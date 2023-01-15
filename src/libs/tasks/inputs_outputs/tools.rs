@@ -6,11 +6,8 @@ use prost::Message;
 use std::net::UdpSocket;
 use std::time::Instant;
 
-const BUFFER_SIZE: usize = 4096;
-
 pub struct ToolsInputOutputTask {
     socket: UdpSocket,
-    buf: [u8; BUFFER_SIZE],
     port: u32,
     last_send: Instant,
 }
@@ -81,7 +78,7 @@ impl tools_packet::SoftwarePacket {
 }
 
 impl Task for ToolsInputOutputTask {
-    fn with_cli(cli: &mut Cli) -> Self {
+    fn with_cli(_cli: &mut Cli) -> Self {
         let socket = UdpSocket::bind("0.0.0.0:0").expect("Failed to bind the UDP Socket");
 
         socket
@@ -91,7 +88,6 @@ impl Task for ToolsInputOutputTask {
         Self {
             socket,
             port: 10100, // TODO : Make cli port
-            buf: [0u8; BUFFER_SIZE],
             last_send: Instant::now(),
         }
     }
@@ -99,7 +95,7 @@ impl Task for ToolsInputOutputTask {
     fn run(&mut self, data_store: &mut DataStore) {
         if self.last_send.elapsed().as_millis() > 16  {
             self.last_send = Instant::now();
-            let mut packet = tools_packet::SoftwarePacket::with_data_store(data_store);
+            let packet = tools_packet::SoftwarePacket::with_data_store(data_store);
 
             let mut buf = Vec::new();
             buf.reserve(packet.encoded_len());

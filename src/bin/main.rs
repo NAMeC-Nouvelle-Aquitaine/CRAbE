@@ -11,7 +11,6 @@ use software::libs::tasks::task::Task;
 #[macro_use]
 extern crate log;
 use env_logger::Env;
-use software::libs::tasks::examples::pass::PassExampleTask;
 use software::libs::tasks::inputs::input::VisionGcFilterInputTask;
 use software::libs::tasks::inputs::zmq::ZmqInputTask;
 use software::libs::tasks::inputs_outputs::tools::ToolsInputOutputTask;

@@ -1,11 +1,10 @@
 use crate::libs::cli::Cli;
 use crate::libs::data::DataStore;
-use crate::libs::data::{ControllableRobot, ControllableRobotFeedback, Robot};
+use crate::libs::data::{ControllableRobot, Robot};
 use crate::libs::protobuf::robot_packet::IaToMainBoard;
 use crate::libs::protobuf::simulation_packet::robot_move_command::Command;
 use crate::libs::protobuf::simulation_packet::{
-    MoveLocalVelocity, MoveWheelVelocity, RobotCommand, RobotControl, RobotControlResponse,
-    RobotMoveCommand,
+    MoveLocalVelocity, MoveWheelVelocity, RobotCommand, RobotMoveCommand,
 };
 use crate::libs::tasks::task::Task;
 use clap::Args;
@@ -76,7 +75,7 @@ impl UsbCommandsOutputTask {
                 info!("{}", packet.encoded_len());
 
                 match self.port.write(&buf[0..packet.encoded_len() + 1]) {
-                    Ok(v) => {
+                    Ok(_v) => {
                         debug!("sent order: {:?}", packet);
                     }
                     Err(e) => {

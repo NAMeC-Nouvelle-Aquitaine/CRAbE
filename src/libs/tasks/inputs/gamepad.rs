@@ -3,8 +3,7 @@ use crate::libs::data::DataStore;
 use crate::libs::protobuf::simulation_packet::robot_move_command::Command;
 use crate::libs::protobuf::simulation_packet::{MoveLocalVelocity, RobotCommand, RobotMoveCommand};
 use crate::libs::tasks::task::Task;
-use gilrs::{Axis, Button, Event, Gamepad, GamepadId, Gilrs};
-use log::{debug, error, info};
+use gilrs::{Axis, Button, Event, GamepadId, Gilrs};
 
 pub struct GamepadInputTask {
     gilrs: Gilrs,
