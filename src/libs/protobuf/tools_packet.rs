@@ -57,14 +57,14 @@ pub struct Annotation {
     pub fill_color: ::core::option::Option<Rgba>,
     #[prost(message, optional, tag = "6")]
     pub shape_color: ::core::option::Option<Rgba>,
-    #[prost(oneof = "annotation::Type", tags = "1, 2, 3, 4")]
-    pub r#type: ::core::option::Option<annotation::Type>,
+    #[prost(oneof = "annotation::AnnotationType", tags = "1, 2, 3, 4")]
+    pub annotation_type: ::core::option::Option<annotation::AnnotationType>,
 }
 /// Nested message and enum types in `Annotation`.
 pub mod annotation {
     #[allow(clippy::derive_partial_eq_without_eq)]
     #[derive(Clone, PartialEq, ::prost::Oneof)]
-    pub enum Type {
+    pub enum AnnotationType {
         #[prost(message, tag = "1")]
         Point(super::AnnotationPoint),
         #[prost(message, tag = "2")]
@@ -78,22 +78,22 @@ pub mod annotation {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Add {
-    #[prost(uint32, tag = "1")]
-    pub id: u32,
+    #[prost(string, tag = "1")]
+    pub id: ::prost::alloc::string::String,
     #[prost(message, optional, tag = "2")]
     pub annotation: ::core::option::Option<Annotation>,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Remove {
-    #[prost(uint32, tag = "1")]
-    pub id: u32,
+    #[prost(string, tag = "1")]
+    pub id: ::prost::alloc::string::String,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RemoveMultiple {
-    #[prost(int32, repeated, tag = "1")]
-    pub id: ::prost::alloc::vec::Vec<i32>,
+    #[prost(string, repeated, tag = "1")]
+    pub id: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]

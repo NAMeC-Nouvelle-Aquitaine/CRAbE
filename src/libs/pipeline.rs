@@ -9,6 +9,7 @@ use std::time::{Duration, Instant};
 pub type Pipeline = Vec<Box<dyn Task>>;
 
 pub fn run_pipeline(mut data_store: &mut DataStore, pipeline: &mut Pipeline) {
+
     let running = Arc::new(AtomicBool::new(true));
     let r = running.clone();
 
@@ -23,7 +24,7 @@ pub fn run_pipeline(mut data_store: &mut DataStore, pipeline: &mut Pipeline) {
         let start = Instant::now();
 
         pipeline.iter_mut().for_each(|task| {
-            task.run(&mut data_store);
+            task.run(&mut data_store); // step
         });
 
         let elasped: f64 = start.elapsed().as_micros() as f64 / 1000.0;

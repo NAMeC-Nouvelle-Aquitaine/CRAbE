@@ -47,7 +47,7 @@ fn main() {
     ];
 
     if cli.game_controller {
-        pipeline.push(GameControllerInputTask::with_cli_boxed(&mut cli))
+        pipeline.insert(2, GameControllerInputTask::with_cli_boxed(&mut cli));
     }
 
     run_pipeline(&mut data_store, &mut pipeline);

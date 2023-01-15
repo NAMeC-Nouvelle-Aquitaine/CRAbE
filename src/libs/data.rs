@@ -4,6 +4,8 @@ use crate::libs::protobuf::simulation_packet::RobotCommand;
 use crate::libs::protobuf::vision_packet::{SslDetectionRobot, SslWrapperPacket};
 use nalgebra::Point2;
 use serde::{Deserialize, Serialize};
+use crate::libs::protobuf::tools_packet;
+use crate::libs::protobuf::tools_packet::AnnotationCircle;
 
 #[derive(Default)]
 pub struct DataStore {
@@ -15,6 +17,38 @@ pub struct DataStore {
     pub vision: Vec<SslWrapperPacket>,
     pub game_controller: Option<Referee>,
     pub field: Option<Field>,
+    pub annotations: Annotations,
+}
+
+#[derive(Default)]
+pub struct Annotations {
+    pub annotations_packets: Vec<tools_packet::AnnotationWrapper>,
+}
+
+impl Annotations{
+    fn add_circle(&mut self, id: &str, radius: f32, x: f32, y: f32) {
+        let circle = tools_packet::annotation::AnnotationType::Circle(
+            AnnotationCircle {
+                center: Some(tools_packet::Point { x, y }),
+                radius,
+            }
+        );
+
+        let mut wrapper = tools_packet::AnnotationWrapper::default();
+        let annotation = tools_packet::Annotation {
+            annotation_type: Some(circle),
+            fill_color : Some(tools_packet::Rgba { red: 0, green: 0, blue: 0, alpha: 0 }),
+            shape_color: Some(tools_packet::Rgba { red: 0, green : 0, blue: 0, alpha: 1}),
+        };
+
+        let mut actions = tools_packet::annotation_wrapper::Actions::Add(tools_packet::Add {
+            annotation: Some(annotation),
+            id: id.to_string()
+        });
+        wrapper.actions = Some(actions);
+
+        self.annotations_packets.push(wrapper);
+    }
 }
 
 #[derive(Default, Serialize, Deserialize, Copy, Clone)]
