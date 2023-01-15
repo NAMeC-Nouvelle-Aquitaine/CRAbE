@@ -10,7 +10,7 @@ use crate::filters::detections::DetectionFilter;
 use crate::filters::filter::FilterTask;
 use crate::filters::game_controller::GameControllerFilter;
 use crate::filters::geometry::GeometryFilter;
-use crate::inputs_outputs::game_controller::GameControllerInputTask;
+use crate::inputs_outputs::game_controller::GameController;
 use crate::inputs_outputs::vision::Vision;
 use crate::libs::pipeline::Pipeline;
 use crate::libs::protobuf::game_controller_packet::Referee;
@@ -45,7 +45,7 @@ impl Task for VisionGcFilterInputTask {
         });
 
         if cli.game_controller {
-            let mut gc = GameControllerInputTask::with_cli(tx_gc, cli);
+            let mut gc = GameController::with_cli(tx_gc, cli);
             std::thread::spawn(move || {
                 info!("gc thread started");
 

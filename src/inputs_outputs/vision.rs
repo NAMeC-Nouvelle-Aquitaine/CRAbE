@@ -4,6 +4,8 @@ use std::str::FromStr;
 use std::sync::mpsc;
 use clap::Args;
 use prost::Message;
+use crate::filters::filter::FilterTask;
+use crate::inputs_outputs::multicast_client::MulticastClient;
 use crate::libs::cli::Cli;
 use crate::libs::protobuf::vision_packet::SslWrapperPacket;
 
@@ -24,42 +26,15 @@ pub struct VisionCli {
 
 
 pub struct Vision {
-    socket: UdpSocket,
-    vision_buf: [u8; BUFFER_SIZE],
-    tx: mpsc::Sender<SslWrapperPacket>,
+    multicast_client:MulticastClient<SslWrapperPacket>
 }
-
 
 impl Vision {
     pub fn with_cli(tx: mpsc::Sender<SslWrapperPacket>, cli: &mut Cli) -> Self {
-        let ipv4 = Ipv4Addr::from_str(cli.vision.vision_ip.as_str())
-            .expect("TODO: Failed to parse vision server ip");
-        let socket = UdpSocket::bind(format!(
-            "{}:{}",
-            cli.vision.vision_ip, cli.vision.vision_port
-        ))
-            .expect("Failed to bind the UDP Socket");
-        socket
-            .join_multicast_v4(&ipv4, &Ipv4Addr::UNSPECIFIED)
-            .expect("Error to join multicast group");
-        socket
-            .set_nonblocking(true)
-            .expect("Failed to set non blocking");
-
-        Self {
-            socket,
-            vision_buf: [0u8; BUFFER_SIZE],
-            tx,
-        }
+        Self { multicast_client: MulticastClient::with_cli(tx, cli.vision.vision_ip.clone(), cli.vision.vision_port.clone()) }
     }
 
     pub fn run(&mut self) {
-        if let Ok(p_size) = self.socket.recv(&mut self.vision_buf) {
-            let packet =
-                SslWrapperPacket::decode(Cursor::new(&self.vision_buf[0..p_size]))
-                    .expect("Error - Decoding the packet");
-
-            self.tx.send(packet).expect("TODO: panic message");
-        }
+        self.multicast_client.run()
     }
 }

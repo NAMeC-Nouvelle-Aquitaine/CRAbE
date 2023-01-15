@@ -4,44 +4,20 @@ use prost::Message;
 use std::io::Cursor;
 use std::net::{Ipv4Addr, UdpSocket};
 use std::sync::mpsc;
+use crate::inputs_outputs::multicast_client::MulticastClient;
 
 const BUFFER_SIZE: usize = 4096;
 
-pub struct GameControllerInputTask {
-    socket: UdpSocket,
-    gc_buf: [u8; BUFFER_SIZE],
-    tx: mpsc::Sender<Referee>,
-
+pub struct GameController {
+    multicast_client:MulticastClient<Referee>
 }
 
-impl GameControllerInputTask {
-    pub fn with_cli(tx: mpsc::Sender<Referee>, _cli: &mut Cli) -> Self
-    where
-        Self: Sized,
-    {
-        let ipv4 = Ipv4Addr::new(224, 5, 23, 1);
-        let socket = UdpSocket::bind("224.5.23.1:10003").expect("Failed to bind the UDP Socket");
-        socket
-            .join_multicast_v4(&ipv4, &Ipv4Addr::UNSPECIFIED)
-            .expect("Error to join multicast group");
-        socket
-            .set_nonblocking(true)
-            .expect("Failed to set non blocking");
-
-        Self {
-            socket,
-            gc_buf: [0u8; BUFFER_SIZE],
-            tx,
-        }
+impl GameController {
+    pub fn with_cli(tx: mpsc::Sender<Referee>, _cli: &mut Cli) -> Self {
+        Self { multicast_client: MulticastClient::with_cli(tx, "224.5.23.1".to_string(), 10003) }
     }
 
     pub fn run(&mut self) {
-        if let Ok(p_size) = self.socket.recv(&mut self.gc_buf) {
-            let packet = Referee::decode(Cursor::new(&self.gc_buf[0..p_size]))
-                .expect("Error - Decoding the packet");
-
-
-            self.tx.send(packet).expect("TODO: panic message");
-        }
+        self.multicast_client.run()
     }
 }
