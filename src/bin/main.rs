@@ -3,9 +3,7 @@ use software::libs::cli::Cli;
 use software::libs::data::DataStore;
 use software::libs::pipeline::{run_pipeline, Pipeline};
 
-use software::libs::tasks::filters::passoire::PassoireFilterTask;
 use software::libs::tasks::inputs::game_controller::GameControllerInputTask;
-use software::libs::tasks::inputs::vision::VisionInputTask;
 use software::libs::tasks::outputs::sim_commands::SimCommandsOutputTask;
 use software::libs::tasks::outputs::usb_commands::UsbCommandsOutputTask;
 use software::libs::tasks::task::Task;
@@ -13,6 +11,7 @@ use software::libs::tasks::task::Task;
 #[macro_use]
 extern crate log;
 use env_logger::Env;
+use software::libs::tasks::inputs::passoire::VisionGcFilterInputTask;
 use software::libs::tasks::inputs::zmq::ZmqInputTask;
 use software::libs::tasks::inputs_outputs::tools::ToolsInputOutputTask;
 use software::libs::tasks::outputs::zmq::ZmqOutputTask;
@@ -31,8 +30,9 @@ fn main() {
     let mut data_store = DataStore::default();
 
     let mut pipeline: Pipeline = vec![
-        VisionInputTask::with_cli_boxed(&mut cli),
-        PassoireFilterTask::with_cli_boxed(&mut cli),
+        // VisionInputTask::with_cli_boxed(&mut cli),
+        // PassoireFilterTask::with_cli_boxed(&mut cli),
+        VisionGcFilterInputTask::with_cli_boxed(&mut cli),
         // MoveToBallExampleTask::with_cli_boxed(&mut cli),
         // PassExampleTask::with_cli_boxed(&mut cli),
         // BallPrinterOutputTask::with_cli_boxed(&mut cli),
