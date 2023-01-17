@@ -1,10 +1,9 @@
 use crate::libs::cli::Cli;
-use crate::libs::data::{DataStore, KICK};
+use crate::libs::data::{Command, DataStore, KICK};
 use crate::libs::tasks::task::Task;
 use log::{debug};
 use serde::{Deserialize, Serialize};
 use zmq::{Socket, DONTWAIT};
-use crate::libs::tasks::inputs::zmq::Command::Kick;
 
 pub struct ZmqInputTask {
     socket: Socket,
@@ -27,7 +26,7 @@ impl Default for ZmqInputTask {
 #[derive(Deserialize)]
 // #[serde(tag = "command", content = "params")]
 #[serde(untagged)]
-pub enum Command {
+pub enum ZMQCommand {
     // #[serde(rename(deserialize = "kick"))]
     Kick { power: f32, chip_kick: bool },
     // #[serde(rename(deserialize = "control"))]
@@ -41,7 +40,7 @@ pub struct ZmqInputTaskReq {
     color: String,
     number: i32,
     // command: String,
-    params: Command, // TODO : Send multiple commands at the same time
+    params: ZMQCommand, // TODO : Send multiple commands at the same time
 }
 
 #[derive(Serialize)]
@@ -80,25 +79,45 @@ fn process_command(command: ZmqInputTaskReq, data_store: &mut DataStore) -> ZmqI
     let team: String = data_store.color.to_string();
     if command.color == team {
         match command.params {
-            Command::Kick { power, chip_kick } => {
-                data_store.commands[command.number as usize].kick =
-                    Option::from(match chip_kick {
+            ZMQCommand::Kick { power, chip_kick } => {
+                data_store.commands.push(Command {
+                    id: command.number as u32,
+                    forward_velocity: 0.0,
+                    left_velocity: 0.0,
+                    angular_velocity: 0.0,
+                    charge: false,
+                    kick : Option::from(match chip_kick {
                         true => KICK::CHIP_KICK { power },
                         false => KICK::STRAIGHT_KICK { power },
-                    });
+                    }),
+                    dribbler: 0.0,
+                });
                 response.succeeded = true;
                 response.message = "Ok".to_string();
             }
-            Command::Control { dx, dy, dturn } => {
-                data_store.commands[command.number as usize].forward_velocity = dx;
-                data_store.commands[command.number as usize].left_velocity = dy;
-                data_store.commands[command.number as usize].angular_velocity = dturn;
+            ZMQCommand::Control { dx, dy, dturn } => {
+                data_store.commands.push(Command {
+                    id: command.number as u32,
+                    forward_velocity: dx,
+                    left_velocity: dy,
+                    angular_velocity: dturn,
+                    charge: false,
+                    kick: None,
+                    dribbler: 0.0,
+                });
                 response.succeeded = true;
                 response.message = "Ok".to_string();
             }
-            Command::Dribble { speed } => {
-                data_store.commands[command.number as usize].dribbler = speed;
-                response.succeeded = true;
+            ZMQCommand::Dribble { speed } => {
+                data_store.commands.push(Command {
+                    id: command.number as u32,
+                    forward_velocity: 0.0,
+                    left_velocity: 0.0,
+                    angular_velocity: 0.0,
+                    charge: false,
+                    kick: None,
+                    dribbler: speed,
+                });                response.succeeded = true;
                 response.message = "Ok".to_string();
             }
         }
