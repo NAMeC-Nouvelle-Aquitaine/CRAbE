@@ -1,5 +1,5 @@
 use crate::libs::cli::Cli;
-use crate::libs::data::{ControllableRobot, DataStore, Field, Robot, TeamColor};
+use crate::libs::data::{DataStore, Field, Robot, TeamColor};
 use crate::libs::protobuf::tools_packet;
 use crate::libs::tasks::task::Task;
 use prost::Message;
@@ -33,17 +33,6 @@ impl From<Robot> for tools_packet::Robot {
             x: value.position.x,
             y: value.position.y,
             orientation: value.orientation,
-        }
-    }
-}
-
-impl From<ControllableRobot> for tools_packet::Robot {
-    fn from(value: ControllableRobot) -> Self {
-        Self {
-            id: value.robot.id,
-            x: value.robot.position.x,
-            y: value.robot.position.y,
-            orientation: value.robot.orientation,
         }
     }
 }

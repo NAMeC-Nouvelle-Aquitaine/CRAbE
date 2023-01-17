@@ -1,13 +1,12 @@
 use crate::libs::cli::Cli;
-use crate::libs::data::DataStore;
-use crate::libs::protobuf::simulation_packet::robot_move_command::Command;
-use crate::libs::protobuf::simulation_packet::{MoveLocalVelocity, RobotCommand, RobotMoveCommand};
+use crate::libs::data::{Command, DataStore};
 use crate::libs::tasks::task::Task;
 use gilrs::{Axis, Button, Event, GamepadId, Gilrs};
 
 pub struct GamepadInputTask {
     gilrs: Gilrs,
     active_gamepad: Option<GamepadId>,
+    command: Command
 }
 
 impl Task for GamepadInputTask {
@@ -25,6 +24,15 @@ impl Task for GamepadInputTask {
         Self {
             gilrs,
             active_gamepad: None,
+            command: Command {
+                id: 0,
+                forward_velocity: 0.0,
+                left_velocity: 0.0,
+                angular_velocity: 0.0,
+                charge: false,
+                kick: None,
+                dribbler: 0.0,
+            }
         }
     }
 
@@ -37,41 +45,32 @@ impl Task for GamepadInputTask {
 
         // You can also use cached gamepad state
         if let Some(gamepad) = self.active_gamepad.map(|id| self.gilrs.gamepad(id)) {
-            // Create robot command
-            let mut r = RobotCommand::default();
-            r.id = 5;
-
             // Move Local Velocity
-            let mut move_robot: MoveLocalVelocity = MoveLocalVelocity::default();
             if gamepad.value(Axis::LeftStickY).abs() > 0.2 {
-                move_robot.forward = gamepad.value(Axis::LeftStickY);
+                self.command.forward_velocity = gamepad.value(Axis::LeftStickY);
             } else {
-                move_robot.forward = 0.0;
+                self.command.forward_velocity = 0.0;
             }
 
             if gamepad.value(Axis::LeftStickX).abs() > 0.2 {
-                move_robot.left = -gamepad.value(Axis::LeftStickX) * 2.0;
+                self.command.left_velocity = -gamepad.value(Axis::LeftStickX) * 2.0;
             } else {
-                move_robot.left = 0.0;
+                self.command.left_velocity = 0.0;
             }
 
             if gamepad.value(Axis::RightStickX).abs() > 0.1 {
-                move_robot.angular = gamepad.value(Axis::RightStickX) * -3.14;
+                self.command.angular_velocity = gamepad.value(Axis::RightStickX) * -3.14;
+            } else {
+                self.command.angular_velocity = 0.0;
             }
 
             if gamepad.is_pressed(Button::LeftTrigger) {
-                r.dribbler_speed = Some(1.0);
+                self.command.dribbler = 1.0;
+            } else {
+                self.command.dribbler = 0.0;
             }
 
-            let command = Command::LocalVelocity(move_robot);
-
-            r.move_command = Some(RobotMoveCommand {
-                command: Some(command),
-            });
-
-            if let Some(robot) = data_store.allies.get_mut(r.id as usize) {
-                robot.command = Some(r);
-            }
+            data_store.commands.push(self.command.clone());
         }
     }
 }

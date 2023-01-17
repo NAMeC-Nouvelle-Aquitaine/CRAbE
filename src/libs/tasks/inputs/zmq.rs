@@ -1,10 +1,10 @@
 use crate::libs::cli::Cli;
-use crate::libs::data::DataStore;
-use crate::libs::skills::kick::KickType;
+use crate::libs::data::{DataStore, KICK};
 use crate::libs::tasks::task::Task;
 use log::{debug};
 use serde::{Deserialize, Serialize};
 use zmq::{Socket, DONTWAIT};
+use crate::libs::tasks::inputs::zmq::Command::Kick;
 
 pub struct ZmqInputTask {
     socket: Socket,
@@ -52,8 +52,8 @@ pub struct ZmqInputTaskRep {
 
 impl Task for ZmqInputTask {
     fn with_cli(_cli: &mut Cli) -> Self
-    where
-        Self: Sized,
+        where
+            Self: Sized,
     {
         Self::default()
     }
@@ -81,23 +81,23 @@ fn process_command(command: ZmqInputTaskReq, data_store: &mut DataStore) -> ZmqI
     if command.color == team {
         match command.params {
             Command::Kick { power, chip_kick } => {
-                data_store.allies[command.number as usize].kick(
-                    match chip_kick {
-                        true => KickType::Chip,
-                        false => KickType::Straight,
-                    },
-                    power,
-                );
+                data_store.commands[command.number as usize].kick =
+                    Option::from(match chip_kick {
+                        true => KICK::CHIP_KICK { power },
+                        false => KICK::STRAIGHT_KICK { power },
+                    });
                 response.succeeded = true;
                 response.message = "Ok".to_string();
             }
             Command::Control { dx, dy, dturn } => {
-                data_store.allies[command.number as usize].control(dx, dy, dturn);
+                data_store.commands[command.number as usize].forward_velocity = dx;
+                data_store.commands[command.number as usize].left_velocity = dy;
+                data_store.commands[command.number as usize].angular_velocity = dturn;
                 response.succeeded = true;
                 response.message = "Ok".to_string();
             }
             Command::Dribble { speed } => {
-                data_store.allies[command.number as usize].dribble(speed);
+                data_store.commands[command.number as usize].dribbler = speed;
                 response.succeeded = true;
                 response.message = "Ok".to_string();
             }

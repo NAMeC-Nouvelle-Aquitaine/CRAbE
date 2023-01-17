@@ -1,7 +1,7 @@
 use crate::libs::cli::Cli;
 use crate::libs::constants::NUMBER_OF_ROBOTS;
 use crate::libs::data::{
-    ControllableRobot, ControllableRobotFeedback, DataStore, Field, Robot, TeamColor,
+    Feedback, DataStore, Field, Robot, TeamColor,
 };
 use crate::libs::tasks::task::Task;
 use log::debug;
@@ -31,7 +31,7 @@ pub struct ZmqPacketRobots {
 pub struct ZmqRobot {
     pub position: [f32; 2],
     pub orientation: f32,
-    pub feedback: Option<ControllableRobotFeedback>,
+    pub feedback: Option<Feedback>,
 }
 
 impl From<Robot> for ZmqRobot {
@@ -43,17 +43,6 @@ impl From<Robot> for ZmqRobot {
         }
     }
 }
-
-impl From<ControllableRobot> for ZmqRobot {
-    fn from(value: ControllableRobot) -> Self {
-        Self {
-            position: [value.robot.position.x, value.robot.position.y],
-            orientation: value.robot.orientation,
-            feedback: value.feedback,
-        }
-    }
-}
-
 impl ZmqPacket {
     fn with_data_store(value: &DataStore) -> Self {
         let yellow;

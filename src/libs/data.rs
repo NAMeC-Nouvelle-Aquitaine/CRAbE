@@ -1,19 +1,20 @@
 use crate::libs::constants::NUMBER_OF_ROBOTS;
 use crate::libs::protobuf::game_controller_packet::Referee;
-use crate::libs::protobuf::simulation_packet::RobotCommand;
-use crate::libs::protobuf::vision_packet::{SslDetectionRobot};
 use nalgebra::Point2;
 use serde::{Deserialize, Serialize};
+use crate::libs::protobuf::vision_packet::SslDetectionRobot;
 
 #[derive(Default)]
 pub struct DataStore {
     pub color: TeamColor,
     pub blue_on_positive_half: bool,
     pub ball: Point2<f32>,
-    pub allies: [ControllableRobot; NUMBER_OF_ROBOTS],
+    pub allies: [Robot; NUMBER_OF_ROBOTS],
     pub enemies: [Robot; NUMBER_OF_ROBOTS], // TODO : Rename opponents
     pub game_controller: Option<Referee>,
     pub field: Option<Field>,
+    pub commands: Vec<Command>,
+    pub feedback: [Feedback; NUMBER_OF_ROBOTS]
 }
 
 #[derive(Default, Serialize, Deserialize, Copy, Clone)]
@@ -68,22 +69,35 @@ impl Robot {
     }
 }
 
-#[derive(Default, Clone)]
-pub struct ControllableRobot {
-    pub robot: Robot,
-    pub command: Option<RobotCommand>,
-    pub feedback: Option<ControllableRobotFeedback>,
-}
-
 #[derive(Default, Clone, Serialize)]
-pub struct ControllableRobotFeedback {
+pub struct Feedback {
+    /// ID of the robot
+    pub id: u8,
+    /// Has the dribbler contact to the ball
     pub infrared: bool,
     // TODO: battery
 }
 
-// TODO : Move this directly on the filter ?
-impl ControllableRobot {
-    pub fn update_pose(&mut self, robot_detection_packet: &SslDetectionRobot) {
-        self.robot.update_pose(robot_detection_packet);
-    }
+#[derive(Clone, Serialize)]
+pub enum KICK {
+    STRAIGHT_KICK { power: f32 },
+    CHIP_KICK { power: f32 },
+}
+
+#[derive(Default, Clone, Serialize)]
+pub struct Command {
+    /// ID of the robot
+    pub id: u32,
+    /// Velocity forward in m.s-1 (towards the dribbler)
+    pub forward_velocity: f32,
+    /// Velocity to the left in m.s-1
+    pub left_velocity: f32,
+    /// Angular velocity rad.s-1 in (counter-clockwise)
+    pub angular_velocity: f32,
+    /// Order to charge the capacitor of the robot
+    pub charge: bool,
+    /// Order to kick the ball, if None doesn't KICK
+    pub kick: Option<KICK>,
+    /// Dribbler speed in rounds per minute rpm
+    pub dribbler: f32,
 }

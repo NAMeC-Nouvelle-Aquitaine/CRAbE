@@ -1,12 +1,7 @@
 use crate::libs::cli::Cli;
 use crate::libs::protobuf::game_controller_packet::Referee;
-use prost::Message;
-use std::io::Cursor;
-use std::net::{Ipv4Addr, UdpSocket};
 use std::sync::mpsc;
 use crate::inputs_outputs::multicast_client::MulticastClient;
-
-const BUFFER_SIZE: usize = 4096;
 
 pub struct GameController {
     multicast_client:MulticastClient<Referee>

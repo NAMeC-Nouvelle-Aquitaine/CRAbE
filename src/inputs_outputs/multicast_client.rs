@@ -2,10 +2,6 @@ use std::io::Cursor;
 use std::net::{Ipv4Addr, UdpSocket};
 use std::str::FromStr;
 use std::sync::mpsc;
-use clap::Args;
-use prost::Message;
-use crate::libs::cli::Cli;
-use crate::libs::protobuf::vision_packet::SslWrapperPacket;
 
 const BUFFER_SIZE: usize = 4096;
 
