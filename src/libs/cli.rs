@@ -1,4 +1,5 @@
 use crate::inputs_outputs::simulation_client::SimulationClientCli;
+use crate::inputs_outputs::ubs_client::USBClientCli;
 use crate::inputs_outputs::vision::VisionCli;
 use crate::libs::tasks::outputs::sim_commands::SimCommandsOutputTaskCli;
 use crate::libs::tasks::outputs::usb_commands::UsbCommandsOutputTaskCli;
@@ -29,5 +30,5 @@ pub struct Cli {
 
     #[command(flatten)]
     #[command(next_help_heading = "usb commands")]
-    pub usb_commands: UsbCommandsOutputTaskCli,
+    pub usb_commands: USBClientCli,
 }
