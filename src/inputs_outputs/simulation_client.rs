@@ -1,12 +1,14 @@
+use crate::inputs_outputs::multicast_client::BUFFER_SIZE;
 use crate::inputs_outputs::output::OutputCommandSending;
 use crate::libs::cli::Cli;
 use crate::libs::constants::NUMBER_OF_ROBOTS;
-use crate::libs::data::{Command, KICK};
+use crate::libs::data::{Command, Kick};
 use crate::libs::protobuf::simulation_packet::{
     robot_move_command, MoveLocalVelocity, RobotCommand, RobotControl, RobotControlResponse,
     RobotMoveCommand,
 };
 use crate::libs::robot::AllyRobotInfo;
+use clap::Args;
 use log::debug;
 use prost::Message;
 use serialport::ClearBuffer::All;
@@ -37,8 +39,8 @@ impl SimulationClient {
         while let Some(command) = commands.last().take() {
             let (kick_speed, kick_angle) = match &command.kick {
                 None => (0.0, 0.0),
-                Some(KICK::StraightKick { power }) => (*power, 0.0),
-                Some(KICK::ChipKick { power }) => (*power, 45.0),
+                Some(Kick::StraightKick { power }) => (*power, 0.0),
+                Some(Kick::ChipKick { power }) => (*power, 45.0),
             };
 
             let robot_command = RobotCommand {
@@ -68,7 +70,7 @@ impl SimulationClient {
 
         self.socket
             .send_to(
-                &buf[0..packet.encoded_len()],
+                &self.buf[0..packet.encoded_len()],
                 format!("127.0.0.1:{}", self.port),
             )
             .expect("couldn't send data");
@@ -104,14 +106,14 @@ impl SimulationClient {
 }
 
 impl OutputCommandSending for SimulationClient {
-    fn with_cli(cli: &mut Cli) -> Self {
+    fn with_cli(cli: &mut Cli) -> Box<Self> {
         let socket = UdpSocket::bind("0.0.0.0:0").expect("Failed to bind the UDP Socket");
 
         socket
             .set_nonblocking(true)
             .expect("Failed to set socket to non-blocking mode");
 
-        Self {
+        Box::new(Self {
             socket,
             port: if cli.y {
                 cli.sim_commands.sim_yellow_port
@@ -119,15 +121,15 @@ impl OutputCommandSending for SimulationClient {
                 cli.sim_commands.sim_blue_port
             },
             buf: [0u8; BUFFER_SIZE],
-        }
+        })
     }
 
-    fn step(&mut self, commands: Vec<Command>) -> Vec<AllyRobotInfo> {
+    fn step(&mut self, commands: &Vec<Command>) -> Vec<AllyRobotInfo> {
         if commands.is_empty() {
             return vec![];
         }
 
-        let mut packet = self.prepare_packet(&commands);
+        let mut packet = self.prepare_packet(commands);
         self.send(packet);
         self.receive()
     }
@@ -148,6 +150,6 @@ impl Drop for SimulationClient {
                 dribbler: 0.0,
             })
         }
-        self.step(commands);
+        self.step(&commands);
     }
 }

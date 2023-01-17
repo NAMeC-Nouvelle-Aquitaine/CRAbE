@@ -1,7 +1,7 @@
 use crate::libs::cli::Cli;
-use crate::libs::data::{Command, DataStore, KICK};
+use crate::libs::data::{Command, DataStore, Kick};
 use crate::libs::tasks::task::Task;
-use log::{debug};
+use log::debug;
 use serde::{Deserialize, Serialize};
 use zmq::{Socket, DONTWAIT};
 
@@ -51,8 +51,8 @@ pub struct ZmqInputTaskRep {
 
 impl Task for ZmqInputTask {
     fn with_cli(_cli: &mut Cli) -> Self
-        where
-            Self: Sized,
+    where
+        Self: Sized,
     {
         Self::default()
     }
@@ -86,9 +86,9 @@ fn process_command(command: ZmqInputTaskReq, data_store: &mut DataStore) -> ZmqI
                     left_velocity: 0.0,
                     angular_velocity: 0.0,
                     charge: false,
-                    kick : Option::from(match chip_kick {
-                        true => KICK::ChipKick { power },
-                        false => KICK::StraightKick { power },
+                    kick: Option::from(match chip_kick {
+                        true => Kick::ChipKick { power },
+                        false => Kick::StraightKick { power },
                     }),
                     dribbler: 0.0,
                 });
@@ -117,7 +117,8 @@ fn process_command(command: ZmqInputTaskReq, data_store: &mut DataStore) -> ZmqI
                     charge: false,
                     kick: None,
                     dribbler: speed,
-                });                response.succeeded = true;
+                });
+                response.succeeded = true;
                 response.message = "Ok".to_string();
             }
         }

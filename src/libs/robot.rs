@@ -21,13 +21,15 @@ impl Robot {
     }
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct EnemyRobot {
-    robot: Robot,
+    pub(crate) robot: Robot,
     info: Option<EnemyRobotInfo>,
 }
 
+#[derive(Serialize, Deserialize, Clone)]
 pub struct AllyRobot {
-    robot: Robot,
+    pub(crate) robot: Robot,
     pub(crate) info: Option<AllyRobotInfo>,
 }
 

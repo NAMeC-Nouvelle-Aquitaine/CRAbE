@@ -5,17 +5,36 @@ use crate::libs::robot::{AllyRobot, EnemyRobot};
 use nalgebra::Point2;
 use serde::{Deserialize, Serialize};
 use std::fmt::{Display, Formatter};
+use std::path::Iter;
 
-#[derive(Default)]
+#[derive(Default, Serialize)]
 pub struct DataStore {
     pub color: TeamColor,
     pub blue_on_positive_half: bool,
     pub ball: Point2<f32>,
-    pub allies: [AllyRobot; NUMBER_OF_ROBOTS],
-    pub enemies: [EnemyRobot; NUMBER_OF_ROBOTS], // TODO : Rename opponents
-    pub game_controller: Option<Referee>,
+    pub allies: [Option<AllyRobot>; NUMBER_OF_ROBOTS],
+    pub enemies: [Option<EnemyRobot>; NUMBER_OF_ROBOTS],
+    // TODO : Rename opponents
+    //pub game_controller: Option<Referee>,
     pub field: Option<Field>,
-    pub commands: Vec<Command>,
+}
+
+impl DataStore {
+    pub fn active_enemies_mut(&mut self) -> impl Iterator<Item = EnemyRobot> {
+        self.enemies.iter_mut().filter_map(|x| *x)
+    }
+
+    pub fn active_enemies(&mut self) -> impl Iterator<Item = EnemyRobot> {
+        self.enemies.iter().filter_map(|x| *x)
+    }
+
+    pub fn active_allies_mut(&mut self) -> impl Iterator<Item = AllyRobot> {
+        self.allies.iter_mut().filter_map(|x| *x)
+    }
+
+    pub fn active_allies(&mut self) -> impl Iterator<Item = AllyRobot> {
+        self.allies.iter().filter_map(|x| *x)
+    }
 }
 
 #[derive(Default, Serialize, Deserialize, Copy, Clone)]
@@ -51,7 +70,7 @@ impl Default for TeamColor {
 }
 
 #[derive(Clone, Serialize)]
-pub enum KICK {
+pub enum Kick {
     StraightKick { power: f32 },
     ChipKick { power: f32 },
 }
@@ -69,7 +88,7 @@ pub struct Command {
     /// Order to charge the capacitor of the robot
     pub charge: bool,
     /// Order to kick the ball, if None doesn't KICK
-    pub kick: Option<KICK>,
+    pub kick: Option<Kick>,
     /// Dribbler speed in rounds per minute rpm
     pub dribbler: f32,
 }

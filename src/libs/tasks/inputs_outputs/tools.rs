@@ -1,8 +1,10 @@
 use crate::libs::cli::Cli;
 use crate::libs::data::{DataStore, Field, TeamColor};
 use crate::libs::protobuf::tools_packet;
+use crate::libs::robot::Robot;
 use crate::libs::tasks::task::Task;
 use prost::Message;
+use serde::Serialize;
 use std::net::UdpSocket;
 use std::time::Instant;
 
@@ -12,58 +14,9 @@ pub struct ToolsInputOutputTask {
     last_send: Instant,
 }
 
-impl From<Field> for tools_packet::Field {
-    fn from(value: Field) -> Self {
-        Self {
-            length: value.length,
-            width: value.width,
-            center_radius: value.center_radius,
-            goal_width: value.goal_width,
-            goal_depth: value.goal_depth,
-            penalty_width: value.penalty_width,
-            penalty_depth: value.penalty_depth,
-        }
-    }
-}
-
-impl From<Robot> for tools_packet::Robot {
-    fn from(value: Robot) -> Self {
-        Self {
-            id: value.id,
-            x: value.position.x,
-            y: value.position.y,
-            orientation: value.orientation,
-        }
-    }
-}
-
-impl tools_packet::SoftwarePacket {
-    fn with_data_store(value: &DataStore) -> tools_packet::SoftwarePacket {
-        let color = if let TeamColor::BLUE = value.color {
-            tools_packet::Color::Blue
-        } else {
-            tools_packet::Color::Yellow
-        };
-        let field = tools_packet::Field::from(value.field.unwrap_or_default());
-
-        let allies = value
-            .allies
-            .clone()
-            .map(|r| tools_packet::Robot::from(r))
-            .to_vec();
-        let opponents = value.enemies.map(|r| tools_packet::Robot::from(r)).to_vec();
-
-        tools_packet::SoftwarePacket {
-            field: Option::from(field),
-            color_team: color as i32,
-            allies,
-            opponents,
-            ball: Option::from(tools_packet::Ball {
-                x: value.ball.x,
-                y: value.ball.y,
-            }),
-        }
-    }
+#[derive(Serialize)]
+struct ToolsData<'a> {
+    store: &'a DataStore,
 }
 
 impl Task for ToolsInputOutputTask {
@@ -84,17 +37,12 @@ impl Task for ToolsInputOutputTask {
     fn run(&mut self, data_store: &mut DataStore) {
         if self.last_send.elapsed().as_millis() > 16 {
             self.last_send = Instant::now();
-            let packet = tools_packet::SoftwarePacket::with_data_store(data_store);
-
-            let mut buf = Vec::new();
-            buf.reserve(packet.encoded_len());
-            packet.encode(&mut buf).unwrap();
+            let tools_data = ToolsData { store: &data_store };
+            let packet = serde_json::to_string(&tools_data);
+            let s = packet.unwrap().encode_to_vec();
 
             self.socket
-                .send_to(
-                    &buf[0..packet.encoded_len()],
-                    format!("127.0.0.1:{}", self.port),
-                )
+                .send_to(&s, format!("127.0.0.1:{}", self.port))
                 .expect("couldn't send data");
         }
     }

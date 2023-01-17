@@ -1,5 +1,5 @@
 use crate::inputs_outputs::simulation_client::SimulationClientCli;
-use crate::inputs_outputs::ubs_client::USBClientCli;
+use crate::inputs_outputs::usb_client::USBClientCli;
 use crate::inputs_outputs::vision::VisionCli;
 use clap::Parser;
 

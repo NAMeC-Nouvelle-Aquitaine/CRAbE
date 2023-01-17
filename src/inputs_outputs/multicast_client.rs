@@ -3,7 +3,7 @@ use std::net::{Ipv4Addr, UdpSocket};
 use std::str::FromStr;
 use std::sync::mpsc;
 
-const BUFFER_SIZE: usize = 4096;
+pub const BUFFER_SIZE: usize = 4096;
 
 pub struct MulticastClient<T: prost::Message> {
     socket: UdpSocket,
@@ -11,16 +11,11 @@ pub struct MulticastClient<T: prost::Message> {
     tx: mpsc::Sender<T>,
 }
 
-
 impl<T: prost::Message + Default> MulticastClient<T> {
     pub fn with_cli(tx: mpsc::Sender<T>, ip: String, port: u32) -> Self {
-        let ipv4 = Ipv4Addr::from_str(ip.as_str())
-            .expect("TODO: Failed to parse vision server ip");
-        let socket = UdpSocket::bind(format!(
-            "{}:{}",
-            ip, port
-        ))
-            .expect("Failed to bind the UDP Socket");
+        let ipv4 = Ipv4Addr::from_str(ip.as_str()).expect("TODO: Failed to parse vision server ip");
+        let socket =
+            UdpSocket::bind(format!("{}:{}", ip, port)).expect("Failed to bind the UDP Socket");
         socket
             .join_multicast_v4(&ipv4, &Ipv4Addr::UNSPECIFIED)
             .expect("Error to join multicast group");
@@ -37,9 +32,8 @@ impl<T: prost::Message + Default> MulticastClient<T> {
 
     pub fn run(&mut self) {
         if let Ok(p_size) = self.socket.recv(&mut self.vision_buf) {
-            let packet =
-                T::decode(Cursor::new(&self.vision_buf[0..p_size]))
-                    .expect("Error - Decoding the packet");
+            let packet = T::decode(Cursor::new(&self.vision_buf[0..p_size]))
+                .expect("Error - Decoding the packet");
 
             self.tx.send(packet).expect("TODO: panic message");
         }
