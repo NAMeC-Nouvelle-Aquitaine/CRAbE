@@ -30,7 +30,7 @@ impl USBClient {
             Some(KICK::ChipKick { power }) => (2, power),
         };
 
-        let packet = IaToMainBoard {
+        IaToMainBoard {
             robot_id: command.id,
             normal_speed: command.forward_velocity,
             tangential_speed: command.left_velocity,
@@ -40,18 +40,17 @@ impl USBClient {
             kick_power,
             charge: command.charge,
             dribbler: command.dribbler > 0.0,
-        };
+        }
+    }
 
+    fn send(&mut self, packet: IaToMainBoard) {
+        // TODO : Buffer on struct?
         let mut buf = Vec::new();
         buf.reserve(packet.encoded_len() + 1);
         buf.push(packet.encoded_len() as u8);
         packet.encode(&mut buf).unwrap();
 
-        info!("{}", packet.encoded_len());
-    }
-
-    fn send(&mut self, packet: IaToMainBoard) {
-        match self.port.write(&buf[0..packet.encoded_len() + 1]) {
+        match self.port.write(&self.buf[0..packet.encoded_len() + 1]) {
             Ok(_v) => {
                 debug!("sent order: {:?}", packet);
             }

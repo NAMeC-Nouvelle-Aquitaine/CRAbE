@@ -1,8 +1,6 @@
 use crate::inputs_outputs::simulation_client::SimulationClientCli;
 use crate::inputs_outputs::ubs_client::USBClientCli;
 use crate::inputs_outputs::vision::VisionCli;
-use crate::libs::tasks::outputs::sim_commands::SimCommandsOutputTaskCli;
-use crate::libs::tasks::outputs::usb_commands::UsbCommandsOutputTaskCli;
 use clap::Parser;
 
 #[derive(Parser)]
