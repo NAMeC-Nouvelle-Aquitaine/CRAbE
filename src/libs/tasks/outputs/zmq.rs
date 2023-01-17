@@ -1,8 +1,6 @@
 use crate::libs::cli::Cli;
 use crate::libs::constants::NUMBER_OF_ROBOTS;
-use crate::libs::data::{
-    Feedback, DataStore, Field, Robot, TeamColor,
-};
+use crate::libs::data::{DataStore, Field, TeamColor};
 use crate::libs::tasks::task::Task;
 use log::debug;
 use serde::Serialize;
@@ -31,7 +29,7 @@ pub struct ZmqPacketRobots {
 pub struct ZmqRobot {
     pub position: [f32; 2],
     pub orientation: f32,
-    pub feedback: Option<Feedback>,
+    pub feedback: Option<RobotInfo>,
 }
 
 impl From<Robot> for ZmqRobot {

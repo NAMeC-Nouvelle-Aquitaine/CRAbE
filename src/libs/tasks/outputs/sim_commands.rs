@@ -1,15 +1,20 @@
 use crate::libs::cli::Cli;
+use crate::libs::constants::NUMBER_OF_ROBOTS;
 use crate::libs::data::{Command, KICK};
-use crate::libs::protobuf::simulation_packet::{MoveLocalVelocity, robot_move_command, RobotCommand, RobotControl, RobotControlResponse, RobotMoveCommand};
+use crate::libs::protobuf::simulation_packet::{
+    robot_move_command, MoveLocalVelocity, RobotCommand, RobotControl, RobotControlResponse,
+    RobotMoveCommand,
+};
+use crate::libs::robot::{AllyRobot, AllyRobotInfo};
 use crate::libs::{data, tasks};
 use clap::Args;
 use data::DataStore;
 use log::{debug, error};
 use prost::Message;
+use serialport::ClearBuffer::All;
 use std::io::Cursor;
 use std::net::UdpSocket;
 use tasks::task::Task;
-use crate::libs::constants::NUMBER_OF_ROBOTS;
 
 const BUFFER_SIZE: usize = 4096;
 
@@ -25,39 +30,24 @@ impl SimCommandsOutputTask {
     fn send(&mut self, commands: &mut Vec<Command>) -> bool {
         let mut packet = RobotControl::default();
 
-        for command in commands.iter_mut() {
-            let mut kick_speed = 0.0;
-            let mut kick_angle = 0.0;
-
-            match &command.kick {
-                None => {}
-                Some(kick) => {
-                    match &kick {
-                        KICK::STRAIGHT_KICK { power } => {
-                            kick_speed = power.clone();
-                        }
-                        KICK::CHIP_KICK { power } => {
-                            kick_speed = power.clone();
-                            kick_angle = 45.0;
-                        }
-                    }
-                }
+        while let Some(command) = commands.last().take() {
+            let (kick_speed, kick_angle) = match &command.kick {
+                None => (0.0, 0.0),
+                Some(KICK::StraightKick { power }) => (*power, 0.0),
+                Some(KICK::ChipKick { power }) => (*power, 45.0),
             };
 
             let robot_command = RobotCommand {
                 id: command.id,
-                move_command: Some(
-                    RobotMoveCommand {
-                        command: Some(
-                            robot_move_command::Command::LocalVelocity {
-                                0: MoveLocalVelocity {
-                                    forward: command.forward_velocity,
-                                    left: command.left_velocity,
-                                    angular: command.angular_velocity,
-                                },
-                            }),
-                    }
-                ),
+                move_command: Some(RobotMoveCommand {
+                    command: Some(robot_move_command::Command::LocalVelocity {
+                        0: MoveLocalVelocity {
+                            forward: command.forward_velocity,
+                            left: command.left_velocity,
+                            angular: command.angular_velocity,
+                        },
+                    }),
+                }),
                 kick_speed: Some(kick_speed),
                 kick_angle: Some(kick_angle),
                 dribbler_speed: Some(command.dribbler),
@@ -125,15 +115,33 @@ impl Task for SimCommandsOutputTask {
 
                     for robot_feedback in packet.feedback {
                         debug!(
-                                    "assigned feedback {:?} to robot #{}",
-                                    robot_feedback, robot_feedback.id
-                                );
+                            "assigned feedback {:?} to robot #{}",
+                            robot_feedback, robot_feedback.id
+                        );
 
-                        data_store.feedback.get_mut(robot_feedback.id as usize).unwrap().infrared = robot_feedback
-                            .dribbler_ball_contact
-                            .unwrap_or_default();
+                        match data_store
+                            .allies
+                            .get_mut(robot_feedback.id as usize)
+                            .unwrap()
+                            .info
+                        {
+                            None => {
+                                data_store
+                                    .allies
+                                    .get_mut(robot_feedback.id as usize)
+                                    .unwrap()
+                                    .info = Some(AllyRobotInfo {
+                                    has_ball: robot_feedback
+                                        .dribbler_ball_contact
+                                        .unwrap_or_default(),
+                                });
+                            }
+                            Some(AllyRobotInfo { mut has_ball }) => {
+                                has_ball = robot_feedback.dribbler_ball_contact.unwrap_or_default();
+                            }
+                        };
                     }
-                },
+                }
                 Err(e) => {
                     error!("{}", e);
                 }
@@ -145,7 +153,7 @@ impl Task for SimCommandsOutputTask {
 
 impl Drop for SimCommandsOutputTask {
     fn drop(&mut self) {
-        let mut commands: Vec<Command> = vec!();
+        let mut commands: Vec<Command> = vec![];
 
         for i in 0..NUMBER_OF_ROBOTS {
             commands.push(Command {

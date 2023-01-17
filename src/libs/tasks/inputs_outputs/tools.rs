@@ -1,5 +1,5 @@
 use crate::libs::cli::Cli;
-use crate::libs::data::{DataStore, Field, Robot, TeamColor};
+use crate::libs::data::{DataStore, Field, TeamColor};
 use crate::libs::protobuf::tools_packet;
 use crate::libs::tasks::task::Task;
 use prost::Message;
@@ -82,7 +82,7 @@ impl Task for ToolsInputOutputTask {
     }
 
     fn run(&mut self, data_store: &mut DataStore) {
-        if self.last_send.elapsed().as_millis() > 16  {
+        if self.last_send.elapsed().as_millis() > 16 {
             self.last_send = Instant::now();
             let packet = tools_packet::SoftwarePacket::with_data_store(data_store);
 

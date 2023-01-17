@@ -1,6 +1,7 @@
 use crate::libs::cli::Cli;
+use crate::libs::constants::NUMBER_OF_ROBOTS;
 use crate::libs::data::{Command, DataStore, KICK};
-use crate::libs::protobuf::robot_packet::{IaToMainBoard};
+use crate::libs::protobuf::robot_packet::IaToMainBoard;
 use crate::libs::tasks::task::Task;
 use clap::Args;
 use log::{debug, error, info};
@@ -8,7 +9,6 @@ use prost::Message;
 use serialport::SerialPort;
 use std::io::Write;
 use std::time::Duration;
-use crate::libs::constants::NUMBER_OF_ROBOTS;
 
 pub struct UsbCommandsOutputTask {
     port: Box<dyn SerialPort>,
@@ -25,24 +25,13 @@ impl UsbCommandsOutputTask {
     // TODO : Seperate the packet preparation to the send
     fn send(&mut self, commands: &mut Vec<Command>) {
         for command in commands.iter_mut() {
-
-            let (kicker_cmd, kick_power) = match &command.kick {
+            let (kicker_cmd, kick_power) = match command.kick {
                 None => {
                     (0, 0.0 as f32) // TODO : Remove this 0 and use the kicker enum
                 }
-                Some(c) => {
-                    match c {
-                        KICK::STRAIGHT_KICK { power } => {
-                            (1, power.clone())
-                        }
-                        KICK::CHIP_KICK { power } => {
-                            (2, power.clone())
-                        }
-                    }
-                }
+                Some(KICK::StraightKick { power }) => (1, power),
+                Some(KICK::ChipKick { power }) => (2, power),
             };
-
-
 
             let packet = IaToMainBoard {
                 robot_id: command.id,
@@ -93,7 +82,7 @@ impl Task for UsbCommandsOutputTask {
 
 impl Drop for UsbCommandsOutputTask {
     fn drop(&mut self) {
-        let mut commands: Vec<Command> = vec!();
+        let mut commands: Vec<Command> = vec![];
 
         for i in 0..NUMBER_OF_ROBOTS {
             commands.push(Command {

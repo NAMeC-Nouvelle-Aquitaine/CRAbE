@@ -1,20 +1,21 @@
 use crate::libs::constants::NUMBER_OF_ROBOTS;
 use crate::libs::protobuf::game_controller_packet::Referee;
+use crate::libs::protobuf::vision_packet::SslDetectionRobot;
+use crate::libs::robot::{AllyRobot, EnemyRobot};
 use nalgebra::Point2;
 use serde::{Deserialize, Serialize};
-use crate::libs::protobuf::vision_packet::SslDetectionRobot;
+use std::fmt::{Display, Formatter};
 
 #[derive(Default)]
 pub struct DataStore {
     pub color: TeamColor,
     pub blue_on_positive_half: bool,
     pub ball: Point2<f32>,
-    pub allies: [Robot; NUMBER_OF_ROBOTS],
-    pub enemies: [Robot; NUMBER_OF_ROBOTS], // TODO : Rename opponents
+    pub allies: [AllyRobot; NUMBER_OF_ROBOTS],
+    pub enemies: [EnemyRobot; NUMBER_OF_ROBOTS], // TODO : Rename opponents
     pub game_controller: Option<Referee>,
     pub field: Option<Field>,
     pub commands: Vec<Command>,
-    pub feedback: [Feedback; NUMBER_OF_ROBOTS]
 }
 
 #[derive(Default, Serialize, Deserialize, Copy, Clone)]
@@ -34,12 +35,11 @@ pub enum TeamColor {
     YELLOW,
 }
 
-impl TeamColor {
-    // TODO: properly implement Display
-    pub fn to_string(&self) -> String {
+impl Display for TeamColor {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            TeamColor::BLUE => "blue".to_string(),
-            TeamColor::YELLOW => "yellow".to_string(),
+            TeamColor::BLUE => write!(f, "blue"),
+            TeamColor::YELLOW => write!(f, "yellow"),
         }
     }
 }
@@ -50,38 +50,10 @@ impl Default for TeamColor {
     }
 }
 
-#[derive(Default, Serialize, Deserialize, Copy, Clone)]
-pub struct Robot {
-    pub id: u32,
-    pub position: Point2<f32>,
-    pub orientation: f32,
-}
-
-impl Robot {
-    // TODO : Move this directly on the filter ?
-    pub fn update_pose(&mut self, robot_detection_packet: &SslDetectionRobot) {
-        self.id = robot_detection_packet.robot_id.unwrap();
-        self.position.x = robot_detection_packet.x / 1000.0;
-        self.position.y = robot_detection_packet.y / 1000.0;
-        if let Some(orientation) = robot_detection_packet.orientation {
-            self.orientation = orientation;
-        }
-    }
-}
-
-#[derive(Default, Clone, Serialize)]
-pub struct Feedback {
-    /// ID of the robot
-    pub id: u8,
-    /// Has the dribbler contact to the ball
-    pub infrared: bool,
-    // TODO: battery
-}
-
 #[derive(Clone, Serialize)]
 pub enum KICK {
-    STRAIGHT_KICK { power: f32 },
-    CHIP_KICK { power: f32 },
+    StraightKick { power: f32 },
+    ChipKick { power: f32 },
 }
 
 #[derive(Default, Clone, Serialize)]

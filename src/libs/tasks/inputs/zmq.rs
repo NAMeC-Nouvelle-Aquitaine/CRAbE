@@ -87,8 +87,8 @@ fn process_command(command: ZmqInputTaskReq, data_store: &mut DataStore) -> ZmqI
                     angular_velocity: 0.0,
                     charge: false,
                     kick : Option::from(match chip_kick {
-                        true => KICK::CHIP_KICK { power },
-                        false => KICK::STRAIGHT_KICK { power },
+                        true => KICK::ChipKick { power },
+                        false => KICK::StraightKick { power },
                     }),
                     dribbler: 0.0,
                 });
