@@ -1,11 +1,9 @@
 use crate::libs::cli::Cli;
 use crate::libs::protobuf::vision_packet::{SslWrapperPacket};
-use crate::libs::{data, tasks};
-use data::DataStore;
+use crate::libs::data::DataStore;
 use std::sync::mpsc;
 use std::sync::mpsc::Receiver;
 use log::info;
-use tasks::task::Task;
 use crate::filters::detections::DetectionFilter;
 use crate::filters::filter::FilterTask;
 use crate::filters::game_controller::GameControllerFilter;
@@ -30,7 +28,7 @@ pub struct VisionGcFilterInputTask {
     is_gc: bool,
 }
 
-impl Task for VisionGcFilterInputTask {
+impl VisionGcFilterInputTask {
     fn with_cli(mut cli: &mut Cli) -> Self {
         let (tx_vision, rx_vision) = mpsc::channel::<SslWrapperPacket>();
         let (tx_gc, rx_gc) = mpsc::channel::<Referee>();
@@ -69,7 +67,7 @@ impl Task for VisionGcFilterInputTask {
         Self { rx_vision, rx_gc, filter_store, pipeline: task_pipeline, is_gc: cli.game_controller }
     }
 
-    fn run(&mut self, data_store: &mut DataStore) {
+    pub fn run(&mut self, data_store: &mut DataStore) {
         // TODO : Here ? No we want to put on task !
         self.filter_store.vision_packet.clear();
         self.filter_store.gc_packet.clear();

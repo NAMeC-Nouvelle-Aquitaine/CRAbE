@@ -27,7 +27,7 @@ impl DetectionFilter {
                         );
                     }
                     Some(robot) => {
-                        robot.update_pose(r);
+                        robot.unwrap().robot.update_pose(r);
                     }
                 },
             );
@@ -44,7 +44,7 @@ impl DetectionFilter {
                         );
                     }
                     Some(robot) => {
-                        robot.update_pose(r);
+                       // robot.unwrap().robot.update_pose(r);
                     }
                 },
             );

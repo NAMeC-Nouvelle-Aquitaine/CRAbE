@@ -1,11 +1,9 @@
 use crate::libs::constants::NUMBER_OF_ROBOTS;
 use crate::libs::protobuf::game_controller_packet::Referee;
-use crate::libs::protobuf::vision_packet::SslDetectionRobot;
 use crate::libs::robot::{AllyRobot, EnemyRobot};
 use nalgebra::Point2;
 use serde::{Deserialize, Serialize};
 use std::fmt::{Display, Formatter};
-use std::path::Iter;
 
 #[derive(Default, Serialize)]
 pub struct DataStore {
@@ -36,6 +34,7 @@ impl DataStore {
         self.allies.iter().filter_map(|x| *x)
     }
 }
+
 
 #[derive(Default, Serialize, Deserialize, Copy, Clone)]
 pub struct Field {

@@ -11,7 +11,6 @@ use crate::libs::robot::AllyRobotInfo;
 use clap::Args;
 use log::debug;
 use prost::Message;
-use serialport::ClearBuffer::All;
 use std::io::Cursor;
 use std::net::UdpSocket;
 
@@ -65,12 +64,14 @@ impl SimulationClient {
     }
 
     fn send(&mut self, packet: RobotControl) {
-        self.buf.reserve(packet.encoded_len());
-        packet.encode(&mut self.buf).unwrap();
+        // TODO : Buffer on struct?
+        let mut buf = Vec::new();
+        buf.reserve(packet.encoded_len());
+        packet.encode(&mut buf).unwrap();
 
         self.socket
             .send_to(
-                &self.buf[0..packet.encoded_len()],
+                &buf[0..packet.encoded_len()],
                 format!("127.0.0.1:{}", self.port),
             )
             .expect("couldn't send data");
@@ -98,7 +99,7 @@ impl SimulationClient {
 
                 ally_info
             }
-            Err(e) => {
+            Err(_e) => {
                 vec![]
             }
         };
@@ -129,7 +130,7 @@ impl OutputCommandSending for SimulationClient {
             return vec![];
         }
 
-        let mut packet = self.prepare_packet(commands);
+        let packet = self.prepare_packet(commands);
         self.send(packet);
         self.receive()
     }

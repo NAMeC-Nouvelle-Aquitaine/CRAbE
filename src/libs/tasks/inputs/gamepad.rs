@@ -1,6 +1,5 @@
 use crate::libs::cli::Cli;
 use crate::libs::data::{Command, DataStore};
-use crate::libs::tasks::task::Task;
 use gilrs::{Axis, Button, Event, GamepadId, Gilrs};
 
 pub struct GamepadInputTask {
@@ -9,8 +8,8 @@ pub struct GamepadInputTask {
     command: Command
 }
 
-impl Task for GamepadInputTask {
-    fn with_cli(_cli: &mut Cli) -> Self
+impl GamepadInputTask {
+    pub fn with_cli(_cli: &mut Cli) -> Self
     where
         Self: Sized,
     {
@@ -36,7 +35,7 @@ impl Task for GamepadInputTask {
         }
     }
 
-    fn run(&mut self, data_store: &mut DataStore) {
+    pub fn run(&mut self, _data_store: &DataStore) -> Command {
         // Examine new events
         while let Some(Event { id, event, time }) = self.gilrs.next_event() {
             println!("{:?} New event from {}: {:?}", time, id, event);
@@ -70,7 +69,9 @@ impl Task for GamepadInputTask {
                 self.command.dribbler = 0.0;
             }
 
-            data_store.commands.push(self.command.clone());
+            self.command.clone()
+        } else {
+            Command::default()
         }
     }
 }

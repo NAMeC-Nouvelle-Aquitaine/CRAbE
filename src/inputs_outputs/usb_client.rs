@@ -4,9 +4,8 @@ use crate::libs::constants::NUMBER_OF_ROBOTS;
 use crate::libs::data::{Command, Kick};
 use crate::libs::protobuf::robot_packet::IaToMainBoard;
 use crate::libs::robot::AllyRobotInfo;
-use clap::command;
 use clap::Args;
-use log::{debug, error, info};
+use log::{debug, error};
 use prost::Message;
 use serialport::SerialPort;
 use std::time::Duration;
@@ -52,7 +51,7 @@ impl USBClient {
         buf.push(packet.encoded_len() as u8);
         packet.encode(&mut buf).unwrap();
 
-        match self.port.write(&self.buf[0..packet.encoded_len() + 1]) {
+        match self.port.write(&buf[0..packet.encoded_len() + 1]) {
             Ok(_v) => {
                 debug!("sent order: {:?}", packet);
             }
@@ -82,7 +81,7 @@ impl OutputCommandSending for USBClient {
         for command in commands.iter() {
             let packet = self.prepare_packet(command);
             self.send(packet);
-            self.receive()
+            return self.receive()
         }
         vec![]
     }

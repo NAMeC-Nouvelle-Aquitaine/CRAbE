@@ -12,6 +12,6 @@ impl FilterTask for GameControllerFilter {
 
     fn step(&self, store: &mut FilterStore, data_store: &mut DataStore) {
         // TODO : Make something better !
-        data_store.game_controller = Some(store.gc_packet.clone().into_iter().last().unwrap());
+        // data_store.game_controller = Some(store.gc_packet.clone().into_iter().last().unwrap());
     }
 }
