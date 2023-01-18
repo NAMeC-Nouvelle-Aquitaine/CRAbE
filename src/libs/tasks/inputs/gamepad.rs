@@ -38,7 +38,7 @@ impl GamepadInputTask {
         if let Some(gamepad) = self.active_gamepad.map(|id| self.gilrs.gamepad(id)) {
             let mut command = Command::default();
 
-            command.id = 0; // TODO : Make id changeable
+            command.id = 5; // TODO : Make id changeable
 
             // Move Local Velocity
             if gamepad.value(Axis::LeftStickY).abs() > 0.2 {
