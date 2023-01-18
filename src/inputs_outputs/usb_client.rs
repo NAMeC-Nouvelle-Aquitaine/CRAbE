@@ -13,7 +13,7 @@ use std::time::Duration;
 #[derive(Args)]
 pub struct USBClientCli {
     /// USB port of the mainboard
-    #[arg(long, default_value = "/dev/USB0")]
+    #[arg(long, default_value = "/dev/ttyUSB0")]
     usb_port: String,
 }
 
