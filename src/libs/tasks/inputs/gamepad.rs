@@ -1,11 +1,11 @@
 use crate::libs::cli::Cli;
-use crate::libs::data::{Command, DataStore};
+use crate::libs::data::{Command, DataStore, Kick};
 use gilrs::{Axis, Button, Event, GamepadId, Gilrs};
 
 pub struct GamepadInputTask {
     gilrs: Gilrs,
     active_gamepad: Option<GamepadId>,
-    command: Command
+    is_charging: bool,
 }
 
 impl GamepadInputTask {
@@ -23,15 +23,7 @@ impl GamepadInputTask {
         Self {
             gilrs,
             active_gamepad: None,
-            command: Command {
-                id: 0,
-                forward_velocity: 0.0,
-                left_velocity: 0.0,
-                angular_velocity: 0.0,
-                charge: false,
-                kick: None,
-                dribbler: 0.0,
-            }
+            is_charging: false,
         }
     }
 
@@ -44,32 +36,41 @@ impl GamepadInputTask {
 
         // You can also use cached gamepad state
         if let Some(gamepad) = self.active_gamepad.map(|id| self.gilrs.gamepad(id)) {
+            let mut command = Command::default();
+
+            command.id = 0; // TODO : Make id changeable
+
             // Move Local Velocity
             if gamepad.value(Axis::LeftStickY).abs() > 0.2 {
-                self.command.forward_velocity = gamepad.value(Axis::LeftStickY);
-            } else {
-                self.command.forward_velocity = 0.0;
+                command.forward_velocity = gamepad.value(Axis::LeftStickY);
             }
 
             if gamepad.value(Axis::LeftStickX).abs() > 0.2 {
-                self.command.left_velocity = -gamepad.value(Axis::LeftStickX) * 2.0;
-            } else {
-                self.command.left_velocity = 0.0;
+                command.left_velocity = -gamepad.value(Axis::LeftStickX) * 2.0;
             }
 
             if gamepad.value(Axis::RightStickX).abs() > 0.1 {
-                self.command.angular_velocity = gamepad.value(Axis::RightStickX) * -3.14;
-            } else {
-                self.command.angular_velocity = 0.0;
+                command.angular_velocity = gamepad.value(Axis::RightStickX) * -3.14;
             }
 
             if gamepad.is_pressed(Button::LeftTrigger) {
-                self.command.dribbler = 1.0;
-            } else {
-                self.command.dribbler = 0.0;
+                command.dribbler = 1.0;
             }
 
-            self.command.clone()
+            if gamepad.is_pressed(Button::North) {
+                self.is_charging = !self.is_charging;
+            }
+
+            command.charge = self.is_charging;
+
+            // TODO : Handle power !
+            if gamepad.is_pressed(Button::RightTrigger2) {
+                command.kick = Some(Kick::StraightKick { power: 1.0 });
+            } else if gamepad.is_pressed(Button::LeftTrigger2) {
+                command.kick = Some(Kick::ChipKick { power: 1.0 });
+            }
+
+            command
         } else {
             Command::default()
         }

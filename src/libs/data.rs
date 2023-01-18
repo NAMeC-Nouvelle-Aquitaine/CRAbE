@@ -9,7 +9,7 @@ use std::fmt::{Display, Formatter};
 pub struct DataStore {
     pub color: TeamColor,
     pub blue_on_positive_half: bool,
-    pub ball: Point2<f32>,
+    pub ball: Option<Point2<f32>>,
     pub allies: [Option<AllyRobot>; NUMBER_OF_ROBOTS],
     pub enemies: [Option<EnemyRobot>; NUMBER_OF_ROBOTS],
     // TODO : Rename opponents
@@ -18,23 +18,22 @@ pub struct DataStore {
 }
 
 impl DataStore {
-    pub fn active_enemies_mut(&mut self) -> impl Iterator<Item = EnemyRobot> {
-        self.enemies.iter_mut().filter_map(|x| *x)
+    pub fn active_enemies_mut(&mut self) -> impl Iterator<Item = &mut EnemyRobot> {
+        self.enemies.iter_mut().filter_map(|x| x.as_mut())
     }
 
-    pub fn active_enemies(&mut self) -> impl Iterator<Item = EnemyRobot> {
-        self.enemies.iter().filter_map(|x| *x)
+    pub fn active_enemies(&mut self) -> impl Iterator<Item = &EnemyRobot> {
+        self.enemies.iter().filter_map(|x| x.as_ref())
     }
 
-    pub fn active_allies_mut(&mut self) -> impl Iterator<Item = AllyRobot> {
-        self.allies.iter_mut().filter_map(|x| *x)
+    pub fn active_allies_mut(&mut self) -> impl Iterator<Item = &mut AllyRobot> {
+        self.allies.iter_mut().filter_map(|x| x.as_mut())
     }
 
-    pub fn active_allies(&mut self) -> impl Iterator<Item = AllyRobot> {
-        self.allies.iter().filter_map(|x| *x)
+    pub fn active_allies(&mut self) -> impl Iterator<Item = &AllyRobot> {
+        self.allies.iter().filter_map(|x| x.as_ref())
     }
 }
-
 
 #[derive(Default, Serialize, Deserialize, Copy, Clone)]
 pub struct Field {
@@ -77,7 +76,7 @@ pub enum Kick {
 #[derive(Default, Clone, Serialize)]
 pub struct Command {
     /// ID of the robot
-    pub id: u32,
+    pub id: u8,
     /// Velocity forward in m.s-1 (towards the dribbler)
     pub forward_velocity: f32,
     /// Velocity to the left in m.s-1

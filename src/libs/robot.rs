@@ -2,7 +2,7 @@ use crate::libs::protobuf::vision_packet::SslDetectionRobot;
 use nalgebra::Point2;
 use serde::{Deserialize, Serialize};
 
-#[derive(Default, Serialize, Deserialize, Clone)]
+#[derive(Default, Serialize, Deserialize, Clone, Copy)]
 pub struct Robot {
     pub id: u32,
     pub position: Point2<f32>,
@@ -24,7 +24,7 @@ impl Robot {
 #[derive(Serialize, Deserialize)]
 pub struct EnemyRobot {
     pub(crate) robot: Robot,
-    info: Option<EnemyRobotInfo>,
+    pub(crate) info: Option<EnemyRobotInfo>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]

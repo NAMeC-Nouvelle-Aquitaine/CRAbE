@@ -9,7 +9,7 @@ use crate::libs::protobuf::simulation_packet::{
 };
 use crate::libs::robot::AllyRobotInfo;
 use clap::Args;
-use log::debug;
+use log::{debug, error};
 use prost::Message;
 use std::io::Cursor;
 use std::net::UdpSocket;
@@ -32,10 +32,10 @@ pub struct SimulationClient {
 }
 
 impl SimulationClient {
-    fn prepare_packet(&self, commands: &Vec<Command>) -> RobotControl {
+    fn prepare_packet<'a>(&self, commands: impl Iterator<Item = &'a Command>) -> RobotControl {
         let mut packet = RobotControl::default();
 
-        while let Some(command) = commands.last().take() {
+        for command in commands {
             let (kick_speed, kick_angle) = match &command.kick {
                 None => (0.0, 0.0),
                 Some(Kick::StraightKick { power }) => (*power, 0.0),
@@ -43,7 +43,7 @@ impl SimulationClient {
             };
 
             let robot_command = RobotCommand {
-                id: command.id,
+                id: command.id as u32,
                 move_command: Some(RobotMoveCommand {
                     command: Some(robot_move_command::Command::LocalVelocity {
                         0: MoveLocalVelocity {
@@ -79,10 +79,10 @@ impl SimulationClient {
         debug!("sent order: {:?}", packet);
     }
 
-    fn receive(&mut self) -> Vec<AllyRobotInfo> {
+    fn receive(&mut self) -> [Option<AllyRobotInfo>; NUMBER_OF_ROBOTS] {
+        let mut ally_info: [Option<AllyRobotInfo>; NUMBER_OF_ROBOTS] = Default::default(); // TODO: We don't have id !
         return match self.socket.recv(&mut self.buf) {
             Ok(p_size) => {
-                let mut ally_info: Vec<AllyRobotInfo> = vec![]; // TODO: We don't have id !
                 let packet = RobotControlResponse::decode(Cursor::new(&self.buf[0..p_size]))
                     .expect("Error - Decoding the packet");
 
@@ -92,15 +92,21 @@ impl SimulationClient {
                         robot_feedback, robot_feedback.id
                     );
 
-                    ally_info.push(AllyRobotInfo {
-                        has_ball: robot_feedback.dribbler_ball_contact(),
-                    })
+                    match ally_info.get_mut(robot_feedback.id as usize) {
+                        None => {}
+                        Some(ally_info) => {
+                            *ally_info = Some(AllyRobotInfo {
+                                has_ball: robot_feedback.dribbler_ball_contact(),
+                            });
+                        }
+                    }
                 }
 
                 ally_info
             }
             Err(_e) => {
-                vec![]
+                error!("couldn't recv from socket");
+                ally_info
             }
         };
     }
@@ -125,12 +131,15 @@ impl OutputCommandSending for SimulationClient {
         })
     }
 
-    fn step(&mut self, commands: &Vec<Command>) -> Vec<AllyRobotInfo> {
+    fn step(
+        &mut self,
+        commands: [Option<Command>; NUMBER_OF_ROBOTS],
+    ) -> [Option<AllyRobotInfo>; NUMBER_OF_ROBOTS] {
         if commands.is_empty() {
-            return vec![];
+            return Default::default();
         }
 
-        let packet = self.prepare_packet(commands);
+        let packet = self.prepare_packet(commands.iter().filter_map(|x| x.as_ref()));
         self.send(packet);
         self.receive()
     }
@@ -138,19 +147,19 @@ impl OutputCommandSending for SimulationClient {
 
 impl Drop for SimulationClient {
     fn drop(&mut self) {
-        let mut commands: Vec<Command> = vec![];
-
-        for i in 0..NUMBER_OF_ROBOTS {
-            commands.push(Command {
-                id: i as u32,
+        let mut commands: [Option<Command>; NUMBER_OF_ROBOTS] = Default::default();
+        for (id, command) in commands.iter_mut().enumerate() {
+            *command = Some(Command {
+                id: id as u8,
                 forward_velocity: 0.0,
                 left_velocity: 0.0,
                 angular_velocity: 0.0,
                 charge: false,
                 kick: None,
                 dribbler: 0.0,
-            })
+            });
         }
-        self.step(&commands);
+
+        self.step(commands);
     }
 }

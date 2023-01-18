@@ -1,23 +1,24 @@
-use std::sync::Arc;
+use clap::Parser;
+use software::libs::cli::Cli;
+use software::libs::data::{Command, DataStore};
 use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
 use std::thread::sleep;
 use std::time::{Duration, Instant};
-use clap::{Parser};
-use software::libs::cli::Cli;
-use software::libs::data::DataStore;
 
 #[macro_use]
 extern crate log;
 
 use env_logger::Env;
 use software::inputs_outputs::output::OutputTask;
+use software::libs::constants::NUMBER_OF_ROBOTS;
 use software::libs::tasks::inputs::gamepad::GamepadInputTask;
 use software::libs::tasks::inputs::input::VisionGcFilterInputTask;
 
 fn main() {
     // Init the environnement
     let env = Env::default()
-        .filter_or("MY_LOG_LEVEL", "trace")
+        .filter_or("MY_LOG_LEVEL", "log")
         .write_style_or("MY_LOG_STYLE", "always");
     env_logger::init_from_env(env);
 
@@ -27,7 +28,8 @@ fn main() {
 
     ctrlc::set_handler(move || {
         shutdown.store(false, Ordering::SeqCst);
-    }).expect("Error setting Ctrl-C handler");
+    })
+    .expect("Error setting Ctrl-C handler");
 
     let mut min = f64::MAX;
     let mut max = f64::MIN;
@@ -41,17 +43,22 @@ fn main() {
     while running.load(Ordering::SeqCst) {
         let start = Instant::now();
 
-        let mut commands = vec![];
-        commands.push(gamepad.run(&data_store));
+        let mut commands: [Option<Command>; NUMBER_OF_ROBOTS] = Default::default();
+        commands[0] = Some(gamepad.run(&data_store));
         output.run(&mut data_store, commands);
 
+        let elapsed = start.elapsed().as_micros() as f64 / 1000.0;
+        let sleep_time = Duration::from_millis(16).as_micros() - start.elapsed().as_micros();
+        if sleep_time > 0 {
+            sleep(Duration::from_micros(sleep_time as u64));
+        }
 
-        let elapsed: f64 = start.elapsed().as_millis() as f64;
-        let sleep_time = Duration::from_millis(15).as_millis() as i64 - start.elapsed().as_millis() as i64;
-        if sleep_time > 0 { sleep(Duration::from_millis(sleep_time as u64)); }
-
-        if elapsed > max { max = elapsed; }
-        if elapsed < min { min = elapsed; }
+        if elapsed > max {
+            max = elapsed;
+        }
+        if elapsed < min {
+            min = elapsed;
+        }
 
         trace!(
             "pipeline took {:>6} ms, max: {:>6} ms, min: {:>6} ms",

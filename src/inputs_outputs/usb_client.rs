@@ -22,7 +22,7 @@ pub struct USBClient {
 }
 
 impl USBClient {
-    fn prepare_packet(&mut self, command: &Command) -> IaToMainBoard {
+    fn prepare_packet(&mut self, command: Command) -> IaToMainBoard {
         let (kicker_cmd, kick_power) = match command.kick {
             None => {
                 (0, 0.0 as f32) // TODO : Remove this 0 and use the kicker enum
@@ -32,7 +32,7 @@ impl USBClient {
         };
 
         IaToMainBoard {
-            robot_id: command.id,
+            robot_id: command.id as u32,
             normal_speed: command.forward_velocity,
             tangential_speed: command.left_velocity,
             angular_speed: command.angular_velocity,
@@ -62,8 +62,8 @@ impl USBClient {
     }
 
     // TODO : Add receive function
-    fn receive(&self) -> Vec<AllyRobotInfo> {
-        vec![]
+    fn receive(&self) -> [Option<AllyRobotInfo>; NUMBER_OF_ROBOTS] {
+        Default::default()
     }
 }
 
@@ -77,32 +77,36 @@ impl OutputCommandSending for USBClient {
         })
     }
 
-    fn step(&mut self, commands: &Vec<Command>) -> Vec<AllyRobotInfo> {
-        for command in commands.iter() {
+    fn step(
+        &mut self,
+        commands: [Option<Command>; NUMBER_OF_ROBOTS],
+    ) -> [Option<AllyRobotInfo>; NUMBER_OF_ROBOTS] {
+        for command in commands.into_iter().filter_map(|x| x) {
             let packet = self.prepare_packet(command);
             self.send(packet);
-            return self.receive()
+
+            // TODO: FIX THIS RETURN
+            // return self.receive();
         }
-        vec![]
+        Default::default()
     }
 }
 
 impl Drop for USBClient {
     fn drop(&mut self) {
-        let mut commands: Vec<Command> = vec![];
-
-        for i in 0..NUMBER_OF_ROBOTS {
-            commands.push(Command {
-                id: i as u32,
+        let mut commands: [Option<Command>; NUMBER_OF_ROBOTS] = Default::default();
+        for (id, command) in commands.iter_mut().enumerate() {
+            *command = Some(Command {
+                id: id as u8,
                 forward_velocity: 0.0,
                 left_velocity: 0.0,
                 angular_velocity: 0.0,
                 charge: false,
                 kick: None,
                 dribbler: 0.0,
-            })
+            });
         }
 
-        self.step(&commands);
+        self.step(commands);
     }
 }
