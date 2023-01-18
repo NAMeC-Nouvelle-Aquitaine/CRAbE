@@ -2,7 +2,7 @@ use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::thread::sleep;
 use std::time::{Duration, Instant};
-use clap::{Parser};
+use clap::{Command, Parser};
 use software::libs::cli::Cli;
 use software::libs::data::DataStore;
 
@@ -10,7 +10,9 @@ use software::libs::data::DataStore;
 extern crate log;
 
 use env_logger::Env;
+use software::decision_making::pipeline::DecisionToolsPipeline;
 use software::inputs_outputs::output::OutputTask;
+use software::libs::constants::NUMBER_OF_ROBOTS;
 use software::libs::tasks::inputs::input::VisionGcFilterInputTask;
 
 fn main() {
@@ -34,16 +36,16 @@ fn main() {
     let mut cli = Cli::parse();
     let mut data_store = DataStore::default();
 
-
     let mut input = VisionGcFilterInputTask::with_cli(&mut cli);
-    // let strategy = Strat
+    let mut decision_tools = DecisionToolsPipeline::with_cli(&mut cli);
     let mut output = OutputTask::with_cli(&mut cli);
 
     while running.load(Ordering::SeqCst) {
         let start = Instant::now();
 
+        // 1. Input the systems
         input.run(&mut data_store);
-        let commands = vec![];
+        let commands = decision_tools.run(&DataStore,);
         output.run(&mut data_store, commands);
 
 

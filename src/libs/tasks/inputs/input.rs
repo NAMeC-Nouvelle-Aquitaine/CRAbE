@@ -29,7 +29,7 @@ pub struct VisionGcFilterInputTask {
 }
 
 impl VisionGcFilterInputTask {
-    fn with_cli(mut cli: &mut Cli) -> Self {
+    pub fn with_cli(mut cli: &mut Cli) -> Self {
         let (tx_vision, rx_vision) = mpsc::channel::<SslWrapperPacket>();
         let (tx_gc, rx_gc) = mpsc::channel::<Referee>();
 

@@ -31,6 +31,7 @@ impl OutputTask {
         // 1. Guard
 
         // TODO : Speed Limit
+        // TODO : Filter the commands that robot doesn't exist
 
         // 2. Send the commands
         self.client.step(&commands);
