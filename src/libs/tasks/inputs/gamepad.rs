@@ -9,7 +9,7 @@ pub struct GamepadInputTask {
 }
 
 impl GamepadInputTask {
-    pub fn with_cli(_cli: &mut Cli) -> Self
+    pub fn with_cli(_cli: &Cli) -> Self
     where
         Self: Sized,
     {

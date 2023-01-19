@@ -21,7 +21,7 @@ impl DataStore {
         self.enemies.iter_mut().filter_map(|x| x.as_mut())
     }
 
-    pub fn active_enemies(&mut self) -> impl Iterator<Item = &EnemyRobot> {
+    pub fn active_enemies(&self) -> impl Iterator<Item = &EnemyRobot> {
         self.enemies.iter().filter_map(|x| x.as_ref())
     }
 
@@ -29,7 +29,7 @@ impl DataStore {
         self.allies.iter_mut().filter_map(|x| x.as_mut())
     }
 
-    pub fn active_allies(&mut self) -> impl Iterator<Item = &AllyRobot> {
+    pub fn active_allies(&self) -> impl Iterator<Item = &AllyRobot> {
         self.allies.iter().filter_map(|x| x.as_ref())
     }
 }

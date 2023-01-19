@@ -1,11 +1,7 @@
-use crate::decision_making::commands_wrapper::CommandsWrapper;
+use crate::decision_making::command_wrapper::CommandWrapper;
 
-struct ZMQ {
-
-}
+struct ZMQ {}
 
 impl ZMQ {
-    fn run(commands_wrapper: &CommandsWrapper) {
-
-    }
+    fn run(commands_wrapper: &CommandWrapper) {}
 }

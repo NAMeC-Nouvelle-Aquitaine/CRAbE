@@ -3,9 +3,9 @@
 #![warn(clippy::panic)]
 // #![deny(clippy::all)]
 
+pub mod decision_making;
 pub mod filters;
 pub mod guard;
 pub mod inputs_outputs;
 pub mod libs;
-pub mod decision_making;
 pub mod tools;

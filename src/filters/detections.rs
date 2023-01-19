@@ -2,19 +2,69 @@ use crate::filters::filter::FilterTask;
 use crate::libs::cli::Cli;
 use crate::libs::data::{DataStore, TeamColor};
 use crate::libs::protobuf::vision_packet::SslDetectionRobot;
-use crate::libs::robot::AllyRobot;
+use crate::libs::robot::{AllyRobot, Robot};
 use crate::libs::tasks::inputs::input::FilterStore;
 use log::error;
 
 pub struct DetectionFilter;
 
+/*
+struct FilterResult<'a, 'b, T>
+where
+    &'b mut T: Into<&'a mut Robot>,
+{
+    robot: &'b mut T,
+}
+
+ */
 impl DetectionFilter {
+    /*
+    fn update_robot_poses<'a, T>(
+        robots: impl Iterator<Item = &'a SslDetectionRobot>,
+        stored_robots: &'a mut [Option<T>],
+    ) where
+        &'a mut T: Into<&'a mut Robot>,
+    {
+        // TODO: Move into separate file?
+        robots
+            .filter(|r| r.robot_id.is_some())
+            .filter_map(|stored| {
+                if let Some(robot) = stored_robots.get_mut(stored.robot_id.unwrap() as usize) {
+                    if let Some(robot) = robot {
+                        return Some(FilterResult { stored, robot });
+                    }
+
+                    error!(
+                        "robot id {} in detection packet isn't active",
+                        stored.robot_id.unwrap()
+                    );
+                } else {
+                    error!(
+                        "invalid robot id {} in detection packet",
+                        stored.robot_id.unwrap()
+                    );
+                }
+
+                return None;
+            })
+            .for_each(|filter_result| {
+                let robot: &mut Robot = filter_result.robot.into();
+                robot.update_pose(&filter_result.stored);
+            });
+    }
+     */
+
     fn update_robots(
         &self,
         allies: &Vec<SslDetectionRobot>,
         enemies: &Vec<SslDetectionRobot>,
         store: &mut DataStore,
     ) {
+        /*
+        Self::update_robot_poses(allies.iter(), store.allies.as_mut_slice());
+        Self::update_robot_poses(enemies.iter(), store.enemies.as_mut_slice());
+         */
+
         allies
             .into_iter()
             .filter(|r| r.robot_id.is_some())
@@ -69,7 +119,7 @@ impl DetectionFilter {
 }
 
 impl FilterTask for DetectionFilter {
-    fn with_cli(_cli: &mut Cli) -> Box<Self> {
+    fn with_cli(_cli: &Cli) -> Box<Self> {
         Box::new(Self {})
     }
 

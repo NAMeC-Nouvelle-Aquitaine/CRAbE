@@ -50,7 +50,7 @@ pub struct ZmqInputTaskRep {
 }
 
 impl Task for ZmqInputTask {
-    fn with_cli(_cli: &mut Cli) -> Self
+    fn with_cli(_cli: &Cli) -> Self
     where
         Self: Sized,
     {

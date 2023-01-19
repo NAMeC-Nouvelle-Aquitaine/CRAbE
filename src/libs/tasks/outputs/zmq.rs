@@ -24,7 +24,7 @@ impl Default for ZmqOutputTask {
 }
 
 impl Task for ZmqOutputTask {
-    fn with_cli(_cli: &mut Cli) -> Self
+    fn with_cli(_cli: &Cli) -> Self
     where
         Self: Sized,
     {

@@ -27,10 +27,22 @@ pub struct EnemyRobot {
     pub(crate) info: Option<EnemyRobotInfo>,
 }
 
+impl<'a> Into<&'a mut Robot> for &'a mut EnemyRobot {
+    fn into(self) -> &'a mut Robot {
+        &mut self.robot
+    }
+}
+
 #[derive(Serialize, Deserialize, Clone)]
 pub struct AllyRobot {
     pub(crate) robot: Robot,
     pub(crate) info: Option<AllyRobotInfo>,
+}
+
+impl<'a> Into<&'a mut Robot> for &'a mut AllyRobot {
+    fn into(self) -> &'a mut Robot {
+        &mut self.robot
+    }
 }
 
 #[derive(Clone, Serialize, Deserialize)]

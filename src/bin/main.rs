@@ -1,4 +1,4 @@
-use clap::{Parser};
+use clap::Parser;
 use software::libs::cli::Cli;
 use software::libs::data::DataStore;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -36,9 +36,9 @@ fn main() {
     let mut cli = Cli::parse();
     let mut data_store = DataStore::default();
 
-    let mut input = VisionGcFilterInputTask::with_cli(&mut cli);
-    let mut decision_tools = DecisionToolsPipeline::with_cli(&mut cli);
-    let mut output = OutputTask::with_cli(&mut cli);
+    let mut input = VisionGcFilterInputTask::with_cli(&cli);
+    let mut decision_tools = DecisionToolsPipeline::with_cli(&cli);
+    let mut output = OutputTask::with_cli(&cli);
     let mut _feedback = Default::default();
 
     while running.load(Ordering::SeqCst) {

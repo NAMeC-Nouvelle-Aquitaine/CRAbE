@@ -20,7 +20,7 @@ struct ToolsData<'a> {
 }
 
 impl Task for ToolsInputOutputTask {
-    fn with_cli(_cli: &mut Cli) -> Self {
+    fn with_cli(_cli: &Cli) -> Self {
         let socket = UdpSocket::bind("0.0.0.0:0").expect("Failed to bind the UDP Socket");
 
         socket
