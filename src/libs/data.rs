@@ -1,5 +1,4 @@
 use crate::libs::constants::NUMBER_OF_ROBOTS;
-use crate::libs::protobuf::game_controller_packet::Referee;
 use crate::libs::robot::{AllyRobot, EnemyRobot};
 use nalgebra::Point2;
 use serde::{Deserialize, Serialize};

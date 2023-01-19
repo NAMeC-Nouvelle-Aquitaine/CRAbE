@@ -1,4 +1,4 @@
-use clap::{Command, Parser};
+use clap::{Parser};
 use software::libs::cli::Cli;
 use software::libs::data::DataStore;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -12,7 +12,6 @@ extern crate log;
 use env_logger::Env;
 use software::decision_making::pipeline::DecisionToolsPipeline;
 use software::inputs_outputs::output::OutputTask;
-use software::libs::constants::NUMBER_OF_ROBOTS;
 use software::libs::tasks::inputs::input::VisionGcFilterInputTask;
 
 fn main() {

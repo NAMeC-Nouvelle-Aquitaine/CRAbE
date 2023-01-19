@@ -10,7 +10,7 @@ impl FilterTask for GameControllerFilter {
         Box::new(Self {})
     }
 
-    fn step(&self, store: &mut FilterStore, data_store: &mut DataStore) {
+    fn step(&self, _store: &mut FilterStore, _data_store: &mut DataStore) {
         // TODO : Make something better !
         // data_store.game_controller = Some(store.gc_packet.clone().into_iter().last().unwrap());
     }
