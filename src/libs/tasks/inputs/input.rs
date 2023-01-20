@@ -1,17 +1,17 @@
-use crate::libs::cli::Cli;
-use crate::libs::protobuf::vision_packet::{SslWrapperPacket};
-use crate::libs::data::DataStore;
-use std::sync::mpsc;
-use std::sync::mpsc::Receiver;
-use log::info;
 use crate::filters::detections::DetectionFilter;
 use crate::filters::filter::FilterTask;
 use crate::filters::game_controller::GameControllerFilter;
 use crate::filters::geometry::GeometryFilter;
 use crate::inputs_outputs::game_controller::GameController;
 use crate::inputs_outputs::vision::Vision;
+use crate::libs::cli::Cli;
+use crate::libs::data::DataStore;
 use crate::libs::pipeline::Pipeline;
 use crate::libs::protobuf::game_controller_packet::Referee;
+use crate::libs::protobuf::vision_packet::SslWrapperPacket;
+use log::info;
+use std::sync::mpsc;
+use std::sync::mpsc::Receiver;
 
 #[derive(Default)]
 pub struct FilterStore {
@@ -29,7 +29,7 @@ pub struct VisionGcFilterInputTask {
 }
 
 impl VisionGcFilterInputTask {
-    pub fn with_cli(mut cli: &mut Cli) -> Self {
+    pub fn with_cli(cli: &Cli) -> Self {
         let (tx_vision, rx_vision) = mpsc::channel::<SslWrapperPacket>();
         let (tx_gc, rx_gc) = mpsc::channel::<Referee>();
 
@@ -56,15 +56,21 @@ impl VisionGcFilterInputTask {
         let filter_store = FilterStore::default();
 
         let mut task_pipeline: Pipeline<dyn FilterTask> = vec![
-            GeometryFilter::with_cli(&mut cli),
-            DetectionFilter::with_cli(&mut cli),
+            GeometryFilter::with_cli(&cli),
+            DetectionFilter::with_cli(&cli),
         ];
 
         if cli.game_controller {
-            task_pipeline.push(GameControllerFilter::with_cli(&mut cli));
+            task_pipeline.push(GameControllerFilter::with_cli(&cli));
         }
 
-        Self { rx_vision, rx_gc, filter_store, pipeline: task_pipeline, is_gc: cli.game_controller }
+        Self {
+            rx_vision,
+            rx_gc,
+            filter_store,
+            pipeline: task_pipeline,
+            is_gc: cli.game_controller,
+        }
     }
 
     pub fn run(&mut self, data_store: &mut DataStore) {
@@ -74,7 +80,9 @@ impl VisionGcFilterInputTask {
 
         // TODO : Do we want to put on a task ?
         // TODO : Do we want to put a max recv packet ?
-        self.filter_store.vision_packet.extend(self.rx_vision.try_iter());
+        self.filter_store
+            .vision_packet
+            .extend(self.rx_vision.try_iter());
         if self.is_gc {
             self.filter_store.gc_packet.extend(self.rx_gc.try_iter());
         }

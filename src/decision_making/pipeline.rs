@@ -3,11 +3,10 @@ use crate::libs::cli::Cli;
 use crate::libs::constants::NUMBER_OF_ROBOTS;
 use crate::libs::data::{Command, DataStore};
 
-
 pub struct DecisionToolsPipeline {}
 
 impl DecisionToolsPipeline {
-    pub fn with_cli(_cli: &mut Cli) -> Self {
+    pub fn with_cli(_cli: &Cli) -> Self {
         Self {}
     }
 
@@ -19,6 +18,6 @@ impl DecisionToolsPipeline {
 
         // 2. Here put decision making
 
-        command_wrapper.get_commands();
+        command_wrapper.into_inner()
     }
 }

@@ -4,3 +4,4 @@ pub mod output;
 pub mod simulation_client;
 pub mod usb_client;
 pub mod vision;
+pub mod guard;

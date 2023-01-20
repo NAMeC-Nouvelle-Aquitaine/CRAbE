@@ -68,7 +68,7 @@ impl USBClient {
 }
 
 impl OutputCommandSending for USBClient {
-    fn with_cli(cli: &mut Cli) -> Box<Self> {
+    fn with_cli(cli: &Cli) -> Box<Self> {
         Box::new(Self {
             port: serialport::new(cli.usb_commands.usb_port.clone(), 115_200)
                 .timeout(Duration::from_millis(1))

@@ -1,8 +1,8 @@
-use std::sync::mpsc;
-use clap::Args;
 use crate::inputs_outputs::multicast_client::MulticastClient;
 use crate::libs::cli::Cli;
 use crate::libs::protobuf::vision_packet::SslWrapperPacket;
+use clap::Args;
+use std::sync::mpsc;
 
 // TODO : Make port, address, interface for multicast to be changed
 
@@ -17,14 +17,19 @@ pub struct VisionCli {
     vision_port: u32,
 }
 
-
 pub struct Vision {
-    multicast_client:MulticastClient<SslWrapperPacket>
+    multicast_client: MulticastClient<SslWrapperPacket>,
 }
 
 impl Vision {
-    pub fn with_cli(tx: mpsc::Sender<SslWrapperPacket>, cli: &mut Cli) -> Self {
-        Self { multicast_client: MulticastClient::with_cli(tx, cli.vision.vision_ip.clone(), cli.vision.vision_port.clone()) }
+    pub fn with_cli(tx: mpsc::Sender<SslWrapperPacket>, cli: &Cli) -> Self {
+        Self {
+            multicast_client: MulticastClient::with_cli(
+                tx,
+                cli.vision.vision_ip.clone(),
+                cli.vision.vision_port.clone(),
+            ),
+        }
     }
 
     pub fn run(&mut self) {

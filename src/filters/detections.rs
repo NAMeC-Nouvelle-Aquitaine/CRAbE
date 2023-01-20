@@ -69,8 +69,8 @@ impl DetectionFilter {
 }
 
 impl FilterTask for DetectionFilter {
-    fn with_cli(_cli: &mut Cli) -> Box<Self> {
-        Box::new(Self {})
+    fn with_cli(_cli: &Cli) -> Box<Self> {
+        Box::new(Self)
     }
 
     fn step(&self, store: &mut FilterStore, data_store: &mut DataStore) {

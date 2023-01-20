@@ -34,11 +34,11 @@ fn main() {
     let mut min = f64::MAX;
     let mut max = f64::MIN;
 
-    let mut cli = Cli::parse();
+    let cli = Cli::parse();
     let mut data_store = DataStore::default();
 
-    let mut gamepad = GamepadInputTask::with_cli(&mut cli);
-    let mut output = OutputTask::with_cli(&mut cli);
+    let mut gamepad = GamepadInputTask::with_cli(&cli);
+    let mut output = OutputTask::with_cli(&cli);
 
     while running.load(Ordering::SeqCst) {
         let start = Instant::now();
