@@ -4,7 +4,7 @@ use nalgebra::Point2;
 use serde::{Deserialize, Serialize};
 use std::fmt::{Display, Formatter};
 
-#[derive(Default, Serialize)]
+#[derive(Debug, Default, Serialize)]
 pub struct DataStore {
     pub color: TeamColor,
     pub blue_on_positive_half: bool,
@@ -34,7 +34,7 @@ impl DataStore {
     }
 }
 
-#[derive(Default, Serialize, Deserialize, Copy, Clone)]
+#[derive(Debug, Default, Serialize, Deserialize, Copy, Clone)]
 pub struct Field {
     pub width: f32,
     pub length: f32,
@@ -45,7 +45,7 @@ pub struct Field {
     pub center_radius: f32,
 }
 
-#[derive(Copy, Clone, Serialize, Deserialize)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum TeamColor {
     BLUE,
     YELLOW,

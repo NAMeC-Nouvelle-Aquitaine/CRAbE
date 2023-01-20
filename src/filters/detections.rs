@@ -2,7 +2,7 @@ use crate::filters::filter::FilterTask;
 use crate::libs::cli::Cli;
 use crate::libs::data::{DataStore, TeamColor};
 use crate::libs::protobuf::vision_packet::SslDetectionRobot;
-use crate::libs::robot::AllyRobot;
+use crate::libs::robot::{AllyRobot, EnemyRobot};
 use crate::libs::tasks::inputs::input::FilterStore;
 use log::error;
 
@@ -30,11 +30,6 @@ impl DetectionFilter {
                         ally.robot.update_pose(r);
                     }
                     Some(ally) => {
-                        error!(
-                            "ally robot id {} in detection packet isn't active",
-                            r.robot_id.unwrap()
-                        );
-
                         *ally = Some(AllyRobot {
                             robot: Default::default(),
                             info: None,
@@ -54,14 +49,14 @@ impl DetectionFilter {
                             r.robot_id.unwrap()
                         );
                     }
-                    Some(None) => {
-                        error!(
-                            "enemy robot id {} in detection packet isn't active",
-                            r.robot_id.unwrap()
-                        );
+                    Some(Some(enemy)) => {
+                        enemy.robot.update_pose(r);
                     }
-                    Some(Some(robot)) => {
-                        robot.robot.update_pose(r);
+                    Some(enemy) => {
+                        *enemy = Some(EnemyRobot {
+                            robot: Default::default(),
+                            info: None,
+                        });
                     }
                 },
             );
