@@ -18,7 +18,7 @@ use software::libs::tasks::inputs::input::VisionGcFilterInputTask;
 fn main() {
     // Init the environnement
     let env = Env::default()
-        .filter_or("MY_LOG_LEVEL", "log")
+        .filter_or("MY_LOG_LEVEL", "trace")
         .write_style_or("MY_LOG_STYLE", "always");
     env_logger::init_from_env(env);
 

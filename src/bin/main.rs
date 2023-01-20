@@ -17,7 +17,7 @@ use software::libs::tasks::inputs::input::VisionGcFilterInputTask;
 fn main() {
     // Init the environnement
     let env = Env::default()
-        .filter_or("MY_LOG_LEVEL", "trace")
+        .filter_or("MY_LOG_LEVEL", "info")
         .write_style_or("MY_LOG_STYLE", "always");
     env_logger::init_from_env(env);
 
@@ -51,7 +51,8 @@ fn main() {
         _feedback = output.run(&mut data_store, commands);
 
         let elapsed = start.elapsed().as_micros() as f64 / 1000.0;
-        let sleep_time = Duration::from_millis(16).as_micros() - start.elapsed().as_micros();
+        let sleep_time =
+            Duration::from_millis(16).as_micros() as i128 - start.elapsed().as_micros() as i128;
         if sleep_time > 0 {
             sleep(Duration::from_micros(sleep_time as u64));
         }

@@ -115,18 +115,22 @@ impl SimulationClient {
 impl OutputCommandSending for SimulationClient {
     fn with_cli(cli: &Cli) -> Box<Self> {
         let socket = UdpSocket::bind("0.0.0.0:0").expect("Failed to bind the UDP Socket");
+        let port = if cli.y {
+            cli.sim_commands.sim_yellow_port
+        } else {
+            cli.sim_commands.sim_blue_port
+        };
 
         socket
             .set_nonblocking(true)
             .expect("Failed to set socket to non-blocking mode");
+        socket
+            .connect(format!("127.0.0.1:{}", port))
+            .expect("connect function failed");
 
         Box::new(Self {
             socket,
-            port: if cli.y {
-                cli.sim_commands.sim_yellow_port
-            } else {
-                cli.sim_commands.sim_blue_port
-            },
+            port,
             buf: [0u8; BUFFER_SIZE],
         })
     }

@@ -5,6 +5,7 @@ use crate::libs::protobuf::vision_packet::SslDetectionRobot;
 use crate::libs::robot::{AllyRobot, EnemyRobot};
 use crate::libs::tasks::inputs::input::FilterStore;
 use log::error;
+use nalgebra::Point2;
 
 pub struct DetectionFilter;
 
@@ -75,6 +76,8 @@ impl FilterTask for DetectionFilter {
                     if let Some(ref mut ball) = data_store.ball {
                         ball.x = detected_ball.x / 1000.0;
                         ball.y = detected_ball.y / 1000.0;
+                    } else {
+                        data_store.ball = Some(Point2::new(detected_ball.x, detected_ball.y));
                     }
                 }
 
