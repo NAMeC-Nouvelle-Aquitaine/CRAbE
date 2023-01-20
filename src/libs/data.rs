@@ -66,13 +66,13 @@ impl Default for TeamColor {
     }
 }
 
-#[derive(Clone, Serialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub enum Kick {
     StraightKick { power: f32 },
     ChipKick { power: f32 },
 }
 
-#[derive(Default, Clone, Serialize)]
+#[derive(Default, Clone, Debug, Serialize, Deserialize)]
 pub struct Command {
     /// ID of the robot
     pub id: u8,
