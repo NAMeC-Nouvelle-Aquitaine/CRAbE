@@ -4,6 +4,7 @@ use crate::libs::data::{DataStore, Kick};
 use log::debug;
 use serde::{Deserialize, Serialize};
 use std::net::{Ipv4Addr, UdpSocket};
+use crate::libs::data::Command;
 
 const BUFFER_SIZE: usize = 4096;
 
@@ -15,12 +16,12 @@ pub struct Plankton {
 
 #[derive(Deserialize, Debug)]
 pub enum PlanktonCommand {
-    Commands { id: u8, forward_velocity: f32, left_velocity: f32, angular_velocity: f32, charge: bool, kick: u8, dribbler: f32 }
+    Command { id: u8, forward_velocity: f32, left_velocity: f32, angular_velocity: f32, charge: bool, kick: u8, dribbler: f32 }
 }
 
 #[derive(Deserialize, Debug)]
 pub struct PlanktonResponse {
-    message: Vec<PlanktonCommand>,
+    commands: Vec<PlanktonCommand>,
 }
 
 impl Plankton {
@@ -41,14 +42,30 @@ impl Plankton {
         }
     }
 
-    pub fn step(&mut self, _commands_wrapper: &mut CommandsWrapper, store: &DataStore) {
+    pub fn step(&mut self, commands_wrapper: &mut CommandsWrapper, store: &DataStore) {
         debug!("{:#?}", store);
         let json = serde_json::to_vec(&store).unwrap();
         self.socket.send_to(&json[..], self.addr.as_str()).unwrap();
 
         if let Ok(p_size) = self.socket.recv(&mut self.buf) {
             let rep: PlanktonResponse = serde_json::from_slice(&self.buf[0..p_size]).unwrap();
-            dbg!(rep);
+            for command in rep.commands {
+                match command {
+                    PlanktonCommand::Command {id,
+                        forward_velocity, left_velocity, angular_velocity,
+                        charge, dribbler, kick } => {
+                        commands_wrapper.add_command(id as usize, Command {
+                            id,
+                            forward_velocity,
+                            left_velocity,
+                            angular_velocity,
+                            charge,
+                            kick: None,
+                            dribbler,
+                        })
+                    }
+                }
+            }
         }
     }
 }
