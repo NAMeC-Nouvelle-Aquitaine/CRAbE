@@ -34,7 +34,7 @@ fn main() {
     let mut max = f64::MIN;
 
     let cli = Cli::parse();
-    let mut data_store = DataStore::default();
+    let mut data_store = DataStore::with_cli(&cli);
 
     let mut input = VisionGcFilterInputTask::with_cli(&cli);
     let mut decision_tools = DecisionToolsPipeline::with_cli(&cli);

@@ -1,3 +1,4 @@
+use crate::libs::cli::Cli;
 use crate::libs::constants::NUMBER_OF_ROBOTS;
 use crate::libs::robot::{AllyRobot, EnemyRobot};
 use nalgebra::Point2;
@@ -17,6 +18,16 @@ pub struct DataStore {
 }
 
 impl DataStore {
+    pub fn with_cli(cli: &Cli) -> Self {
+        Self {
+            color: if cli.yellow {
+                TeamColor::YELLOW
+            } else {
+                TeamColor::BLUE
+            },
+            ..Default::default()
+        }
+    }
     pub fn active_enemies_mut(&mut self) -> impl Iterator<Item = &mut EnemyRobot> {
         self.enemies.iter_mut().filter_map(|x| x.as_mut())
     }

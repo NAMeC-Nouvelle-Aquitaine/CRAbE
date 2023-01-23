@@ -115,7 +115,7 @@ impl SimulationClient {
 impl OutputCommandSending for SimulationClient {
     fn with_cli(cli: &Cli) -> Box<Self> {
         let socket = UdpSocket::bind("0.0.0.0:0").expect("Failed to bind the UDP Socket");
-        let port = if cli.y {
+        let port = if cli.yellow {
             cli.sim_commands.sim_yellow_port
         } else {
             cli.sim_commands.sim_blue_port

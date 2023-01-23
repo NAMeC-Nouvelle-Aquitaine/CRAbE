@@ -97,7 +97,7 @@ impl Plankton {
     }
 
     pub fn with_cli(cli: &Cli) -> Self {
-        let port = if cli.y { 11301 } else { 11300 };
+        let port = if cli.yellow { 11301 } else { 11300 };
         let socket = Context::new().socket(zmq::REQ).unwrap();
         socket
             .bind(format!("tcp://127.0.0.1:{port}").as_str())

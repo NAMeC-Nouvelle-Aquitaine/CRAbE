@@ -2,7 +2,7 @@ use crate::filters::filter::FilterTask;
 use crate::libs::cli::Cli;
 use crate::libs::data::{DataStore, TeamColor};
 use crate::libs::protobuf::vision_packet::SslDetectionRobot;
-use crate::libs::robot::{AllyRobot, EnemyRobot};
+use crate::libs::robot::{AllyRobot, AsRobot, EnemyRobot, Robot};
 use crate::libs::tasks::inputs::input::FilterStore;
 use log::error;
 use nalgebra::Point2;
@@ -10,57 +10,37 @@ use nalgebra::Point2;
 pub struct DetectionFilter;
 
 impl DetectionFilter {
+    fn update_robot_poses<'a, T>(
+        detected_robots: impl Iterator<Item = &'a SslDetectionRobot>,
+        robots: &mut [Option<T>],
+    ) where
+        T: Default + AsRobot + From<Robot>,
+    {
+        detected_robots.for_each(|r| {
+            if let Some(robot_id) = r.robot_id {
+                if let Some(robot) = robots.get_mut(robot_id as usize) {
+                    if let None = robot {
+                        *robot = Some(T::from(Robot::default()));
+                    }
+                    robot.as_mut().unwrap().as_robot().update_pose(&r);
+                } else {
+                    error!(
+                        "invalid robot id {} in detection packet",
+                        r.robot_id.unwrap()
+                    );
+                }
+            }
+        });
+    }
+
     fn update_robots(
         &self,
         allies: &Vec<SslDetectionRobot>,
         enemies: &Vec<SslDetectionRobot>,
         store: &mut DataStore,
     ) {
-        allies
-            .into_iter()
-            .filter(|r| r.robot_id.is_some())
-            .for_each(
-                |r| match store.allies.get_mut(r.robot_id.unwrap() as usize) {
-                    None => {
-                        error!(
-                            "invalid ally robot id {} in detection packet",
-                            r.robot_id.unwrap()
-                        );
-                    }
-                    Some(Some(ally)) => {
-                        ally.robot.update_pose(r);
-                    }
-                    Some(ally) => {
-                        *ally = Some(AllyRobot {
-                            robot: Default::default(),
-                            info: None,
-                        });
-                    }
-                },
-            );
-
-        enemies
-            .into_iter()
-            .filter(|r| r.robot_id.is_some())
-            .for_each(
-                |r| match store.enemies.get_mut(r.robot_id.unwrap() as usize) {
-                    None => {
-                        error!(
-                            "invalid enemy robot id {} in detection packet",
-                            r.robot_id.unwrap()
-                        );
-                    }
-                    Some(Some(enemy)) => {
-                        enemy.robot.update_pose(r);
-                    }
-                    Some(enemy) => {
-                        *enemy = Some(EnemyRobot {
-                            robot: Default::default(),
-                            info: None,
-                        });
-                    }
-                },
-            );
+        Self::update_robot_poses(allies.iter(), &mut store.allies);
+        Self::update_robot_poses(enemies.iter(), &mut store.enemies);
     }
 }
 

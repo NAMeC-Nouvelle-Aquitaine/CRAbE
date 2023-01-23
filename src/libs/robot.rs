@@ -7,6 +7,7 @@ pub struct Robot {
     pub id: u32,
     pub position: Point2<f32>,
     pub orientation: f32,
+    pub has_ball: bool,
 }
 
 impl Robot {
@@ -21,16 +22,44 @@ impl Robot {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+pub trait AsRobot {
+    fn as_robot(&mut self) -> &mut Robot;
+}
+
+#[derive(Default, Debug, Serialize, Deserialize)]
 pub struct EnemyRobot {
     pub(crate) robot: Robot,
     pub(crate) info: Option<EnemyRobotInfo>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+impl AsRobot for EnemyRobot {
+    fn as_robot(&mut self) -> &mut Robot {
+        &mut self.robot
+    }
+}
+
+impl From<Robot> for EnemyRobot {
+    fn from(robot: Robot) -> Self {
+        Self { robot, info: None }
+    }
+}
+
+#[derive(Default, Debug, Serialize, Deserialize, Clone)]
 pub struct AllyRobot {
     pub(crate) robot: Robot,
     pub(crate) info: Option<AllyRobotInfo>,
+}
+
+impl AsRobot for AllyRobot {
+    fn as_robot(&mut self) -> &mut Robot {
+        &mut self.robot
+    }
+}
+
+impl From<Robot> for AllyRobot {
+    fn from(robot: Robot) -> Self {
+        Self { robot, info: None }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -7,8 +7,8 @@ use clap::Parser;
 #[command(author, version, about, long_about = None)]
 pub struct Cli {
     /// team color
-    #[arg(short, long)]
-    pub(crate) y: bool,
+    #[arg(short = 'y', long)]
+    pub(crate) yellow: bool,
 
     /// is real or simulation
     #[arg(short, long)]
