@@ -4,6 +4,7 @@ use crate::libs::cli::Cli;
 use crate::libs::constants::NUMBER_OF_ROBOTS;
 use crate::libs::data::{Command, DataStore};
 
+//TODO: Add possibility to doesn't run plankton (in cli, by default deactivate plankton)
 pub struct DecisionToolsPipeline {
     plankton: Plankton,
 }
@@ -18,9 +19,9 @@ impl DecisionToolsPipeline {
     pub fn run(&mut self, data_store: &DataStore) -> [Option<Command>; NUMBER_OF_ROBOTS] {
         let mut command_wrapper = CommandsWrapper::new();
         // 1. Tools
-        // ZMQ
-        // Center Control
+        // Plankton
         self.plankton.step(&mut command_wrapper, data_store);
+        // Center Control
 
         // 2. Here put decision making
 
