@@ -1,4 +1,4 @@
-use crate::libs::data::Robot;
+use crate::libs::robot::Robot;
 use nalgebra::{Isometry2, RealField, Vector2};
 
 pub fn frame(x: f32, y: f32, orientation: f32) -> Isometry2<f32> {

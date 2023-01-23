@@ -1,1 +1,1 @@
-pub const NUMBER_OF_ROBOTS: usize = 6;
+pub const NUMBER_OF_ROBOTS: usize = 16;
