@@ -10,8 +10,9 @@ use zmq::{Context, Socket};
 const BUFFER_SIZE: usize = 4096;
 
 pub struct Plankton {
-    socket: Socket,
+    socket: UdpSocket,
     buf: [u8; BUFFER_SIZE],
+    adress: String,
 }
 
 #[derive(Deserialize, Debug, PartialEq)]
@@ -25,36 +26,40 @@ impl Plankton {
         commands_wrapper: &mut CommandsWrapper,
         store: &DataStore,
     ) -> Result<(), String> {
-        let packet = serde_json::to_string(&store).map_err(|e| e.to_string())?;
-        self.socket
-            .send(packet.as_str(), 0)
-            .map_err(|e| e.to_string())?;
-        let received_message = self.socket.recv_msg(0).map_err(|e| e.to_string())?;
-        let rep = serde_json::from_str::<Vec<PlanktonCommand>>(received_message.as_str().unwrap())
-            .map_err(|e| e.to_string())?;
+        let packet = serde_json::to_vec(&store).map_err(|e| e.to_string())?;
 
-        for command in rep {
-            match command {
-                PlanktonCommand::Command(command) => {
-                    commands_wrapper.add_command(command.id as usize, command)
+        self.socket
+            .send_to(&packet[..], self.adress.as_str())
+            .unwrap();
+        if let Ok(p_size) = self.socket.recv(&mut self.buf) {
+            let rep: Vec<PlanktonCommand> = serde_json::from_slice(&self.buf[0..p_size]).unwrap();
+
+            for command in rep {
+                match command {
+                    PlanktonCommand::Command(command) => {
+                        commands_wrapper.add_command(command.id as usize, command)
+                    }
                 }
             }
         }
-
         Ok(())
     }
 
     pub fn with_cli(cli: &Cli) -> Self {
-        let port = if cli.yellow { 11301 } else { 11300 };
-        let socket = Context::new().socket(zmq::REQ).unwrap();
+        let ip = "0.0.0.0".to_string();
+        let port = 11301;
+
+        let addr = format!("{}:{}", ip, port);
+
+        let socket = UdpSocket::bind("0.0.0.0:11300").expect("Failed to bind the UDP Socket");
         socket
-            .bind(format!("tcp://127.0.0.1:{port}").as_str())
-            .unwrap();
-        socket.set_sndtimeo(10).expect("Failed to set snd timeout");
-        socket.set_rcvtimeo(10).expect("Failed to set rcv timeout");
+            .set_nonblocking(true)
+            .expect("Failed to set non blocking");
+
         Self {
             socket,
             buf: [0u8; BUFFER_SIZE],
+            adress: addr,
         }
     }
 }
