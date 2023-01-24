@@ -14,16 +14,13 @@ impl CommandsWrapper {
     }
 
     pub fn add_command(&mut self, robot_id: usize, command: Command) {
-        match self.commands.get_mut(robot_id) {
-            None => {
-                error!("invalid ally robot id {}", robot_id);
+        if let Some(robot_command) = self.commands.get_mut(robot_id) {
+            if robot_command.is_some() {
+                warn!("You already gave a command before for this robot, pay attention");
             }
-            Some(mut robot_command) => {
-                if robot_command.is_some() {
-                    warn!("You give a command before for this robot, pay attention");
-                }
-                *robot_command = Some(command)
-            }
+            *robot_command = Some(command)
+        } else {
+            error!("invalid ally robot id {}", robot_id);
         }
     }
 

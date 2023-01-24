@@ -16,15 +16,7 @@ pub struct Plankton {
 
 #[derive(Deserialize, Debug)]
 pub enum PlanktonCommand {
-    Command {
-        id: u8,
-        forward_velocity: f32,
-        left_velocity: f32,
-        angular_velocity: f32,
-        charge: bool,
-        kick: u8,
-        dribbler: f32,
-    },
+    Command(Command),
 }
 
 #[derive(Deserialize, Debug)]
@@ -43,26 +35,9 @@ impl Plankton {
                 serde_json::from_str(received_message.as_str().unwrap()).unwrap();
             for command in rep.commands {
                 match command {
-                    PlanktonCommand::Command {
-                        id,
-                        forward_velocity,
-                        left_velocity,
-                        angular_velocity,
-                        charge,
-                        dribbler,
-                        kick,
-                    } => commands_wrapper.add_command(
-                        id as usize,
-                        Command {
-                            id,
-                            forward_velocity,
-                            left_velocity,
-                            angular_velocity,
-                            charge,
-                            kick: None,
-                            dribbler,
-                        },
-                    ),
+                    PlanktonCommand::Command(command) => {
+                        commands_wrapper.add_command(command.id as usize, command)
+                    }
                 }
             }
         }

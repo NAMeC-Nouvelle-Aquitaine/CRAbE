@@ -92,13 +92,10 @@ impl SimulationClient {
                         robot_feedback, robot_feedback.id
                     );
 
-                    match ally_info.get_mut(robot_feedback.id as usize) {
-                        None => {}
-                        Some(ally_info) => {
-                            *ally_info = Some(AllyRobotInfo {
-                                has_ball: robot_feedback.dribbler_ball_contact(),
-                            });
-                        }
+                    if let Some(ally_info) = ally_info.get_mut(robot_feedback.id as usize) {
+                        *ally_info = Some(AllyRobotInfo {
+                            has_ball: robot_feedback.dribbler_ball_contact(),
+                        });
                     }
                 }
 

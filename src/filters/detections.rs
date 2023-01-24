@@ -19,7 +19,7 @@ impl DetectionFilter {
         detected_robots.for_each(|r| {
             if let Some(robot_id) = r.robot_id {
                 if let Some(robot) = robots.get_mut(robot_id as usize) {
-                    if let None = robot {
+                    if robot.is_none() {
                         *robot = Some(T::from(Robot::default()));
                     }
                     robot.as_mut().unwrap().as_robot().update_pose(&r);
@@ -61,13 +61,16 @@ impl FilterTask for DetectionFilter {
                     }
                 }
 
-                let (robots_blue, robots_yellow) =
-                    (&detection_frame.robots_blue, &detection_frame.robots_yellow);
+                let (allies, enemies) = match data_store.color {
+                    TeamColor::YELLOW => {
+                        (&detection_frame.robots_yellow, &detection_frame.robots_blue)
+                    }
+                    TeamColor::BLUE => {
+                        (&detection_frame.robots_blue, &detection_frame.robots_yellow)
+                    }
+                };
 
-                match data_store.color {
-                    TeamColor::YELLOW => self.update_robots(robots_yellow, robots_blue, data_store),
-                    TeamColor::BLUE => self.update_robots(robots_blue, robots_yellow, data_store),
-                }
+                self.update_robots(allies, enemies, data_store);
             }
         }
     }
