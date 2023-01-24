@@ -50,6 +50,10 @@ impl FilterTask for DetectionFilter {
     }
 
     fn step(&self, store: &mut FilterStore, data_store: &mut DataStore) {
+        if store.vision_packet.is_empty() {
+            error!("no vision packets found");
+        }
+
         for packet in store.vision_packet.iter() {
             if let Some(detection_frame) = &packet.detection {
                 if let Some(detected_ball) = detection_frame.balls.get(0) {

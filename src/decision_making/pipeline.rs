@@ -3,6 +3,7 @@ use crate::decision_making::plankton::Plankton;
 use crate::libs::cli::Cli;
 use crate::libs::constants::NUMBER_OF_ROBOTS;
 use crate::libs::data::{Command, DataStore};
+use log::error;
 
 //TODO: Add possibility to doesn't run plankton (in cli, by default deactivate plankton)
 pub struct DecisionToolsPipeline {
@@ -20,7 +21,9 @@ impl DecisionToolsPipeline {
         let mut command_wrapper = CommandsWrapper::new();
         // 1. Tools
         // Plankton
-        self.plankton.step(&mut command_wrapper, data_store);
+        if let Err(e) = self.plankton.step(&mut command_wrapper, data_store) {
+            error!("{}", e);
+        }
         // Center Control
 
         // 2. Here put decision making

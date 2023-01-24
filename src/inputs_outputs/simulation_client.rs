@@ -101,8 +101,8 @@ impl SimulationClient {
 
                 ally_info
             }
-            Err(_e) => {
-                error!("couldn't recv from socket");
+            Err(e) => {
+                error!("couldn't recv from socket, err: {}", e);
                 ally_info
             }
         };
