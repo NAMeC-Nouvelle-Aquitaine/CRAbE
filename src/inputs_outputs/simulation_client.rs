@@ -70,9 +70,9 @@ impl SimulationClient {
         packet.encode(&mut buf).unwrap();
 
         self.socket
-            .send_to(
+            .send(
                 &buf[0..packet.encoded_len()],
-                format!("127.0.0.1:{}", self.port),
+                // format!("127.0.0.1:{}", self.port),
             )
             .expect("couldn't send data");
 
