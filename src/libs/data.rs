@@ -5,7 +5,7 @@ use nalgebra::Point2;
 use serde::{Deserialize, Serialize};
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, Default, Serialize)]
+#[derive(Clone, Debug, Default, Serialize)]
 pub struct DataStore {
     pub color: TeamColor,
     pub blue_on_positive_half: bool,

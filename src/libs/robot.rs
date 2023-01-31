@@ -26,7 +26,7 @@ pub trait AsRobot {
     fn as_robot(&mut self) -> &mut Robot;
 }
 
-#[derive(Default, Debug, Serialize, Deserialize)]
+#[derive(Clone, Default, Debug, Serialize, Deserialize)]
 pub struct EnemyRobot {
     pub(crate) robot: Robot,
     pub(crate) info: Option<EnemyRobotInfo>,

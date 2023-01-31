@@ -5,15 +5,19 @@ use crate::libs::constants::NUMBER_OF_ROBOTS;
 use crate::libs::data::{Command, DataStore};
 use log::error;
 
+use super::websocket::WebSocketTask;
+
 //TODO: Add possibility to doesn't run plankton (in cli, by default deactivate plankton)
 pub struct DecisionToolsPipeline {
     plankton: Plankton,
+    websocket: WebSocketTask
 }
 
 impl DecisionToolsPipeline {
     pub fn with_cli(cli: &Cli) -> Self {
         Self {
             plankton: Plankton::with_cli(cli),
+            websocket: WebSocketTask::new()
         }
     }
 
