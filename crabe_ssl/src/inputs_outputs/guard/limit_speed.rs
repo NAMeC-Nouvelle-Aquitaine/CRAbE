@@ -8,7 +8,7 @@ pub struct LimitSpeed {
 }
 
 impl Guard for LimitSpeed {
-    fn with_cli(cli: &Cli) -> LimitSpeed {
+    fn with_cli(_cli: &Cli) -> LimitSpeed {
         Self {
             max_linear: 2.,
             max_angular: 3.14,

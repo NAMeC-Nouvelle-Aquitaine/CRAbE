@@ -1,10 +1,9 @@
 use crate::decision_making::commands_wrapper::CommandsWrapper;
 use crate::libs::cli::Cli;
 use crate::libs::data::Command;
-use crate::libs::data::{DataStore, Kick};
-use log::debug;
-use serde::{Deserialize, Serialize};
-use std::net::{Ipv4Addr, UdpSocket};
+use crate::libs::data::{DataStore};
+use serde::Deserialize;
+use std::net::UdpSocket;
 
 const BUFFER_SIZE: usize = 4096;
 
@@ -44,7 +43,7 @@ impl Plankton {
         Ok(())
     }
 
-    pub fn with_cli(cli: &Cli) -> Self {
+    pub fn with_cli(_cli: &Cli) -> Self {
         let ip = "0.0.0.0".to_string();
         let port = 11301;
 

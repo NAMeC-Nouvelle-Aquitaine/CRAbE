@@ -30,7 +30,7 @@ impl GamepadInputTask {
     pub fn run(&mut self, _data_store: &DataStore) -> Command {
         // Examine new events
         while let Some(Event { id, event, time }) = self.gilrs.next_event() {
-            // println!("{:?} New event from {}: {:?}", time, id, event);
+            println!("{:?} New event from {}: {:?}", time, id, event);
             self.active_gamepad = Some(id);
         }
 

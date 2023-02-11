@@ -2,7 +2,7 @@ use crate::filters::filter::FilterTask;
 use crate::libs::cli::Cli;
 use crate::libs::data::{DataStore, TeamColor};
 use crabe_protobuf::vision_packet::SslDetectionRobot;
-use crate::libs::robot::{AllyRobot, AsRobot, EnemyRobot, Robot};
+use crate::libs::robot::{AsRobot, Robot};
 use crate::libs::tasks::inputs::input::FilterStore;
 use log::error;
 use nalgebra::Point2;

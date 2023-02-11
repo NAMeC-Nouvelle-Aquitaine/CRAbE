@@ -13,7 +13,6 @@ use env_logger::Env;
 use crabe_ssl::inputs_outputs::output::OutputTask;
 use crabe_ssl::libs::constants::NUMBER_OF_ROBOTS;
 use crabe_ssl::libs::tasks::inputs::gamepad::GamepadInputTask;
-use crabe_ssl::libs::tasks::inputs::input::VisionGcFilterInputTask;
 
 fn main() {
     // Init the environnement
