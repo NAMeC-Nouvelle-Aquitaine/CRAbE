@@ -1,6 +1,7 @@
 use crate::filters::filter::FilterTask;
 use crate::libs::cli::Cli;
-use crate::libs::data::{DataStore, Field};
+use crabe_framework::data::field::Field;
+use crate::libs::data::{DataStore};
 use crate::libs::tasks::inputs::input::FilterStore;
 
 pub struct GeometryFilter;

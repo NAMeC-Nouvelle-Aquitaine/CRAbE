@@ -20,3 +20,4 @@ env_logger = "0.10.0"
 serialport = { git= "https://github.com/metta-systems/serialport-rs.git" }
 gilrs = "0.10.1"
 crabe_protobuf = { path = "../crabe_protobuf" }
+crabe_framework = { path = "../crabe_framework" }

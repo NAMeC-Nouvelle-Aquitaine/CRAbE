@@ -143,6 +143,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5827cebf4670468b8772dd191856768aedcb1b0278a04f989f7766351917b9dc"
 
 [[package]]
+name = "crabe_framework"
+version = "0.1.0"
+dependencies = [
+ "nalgebra",
+ "serde",
+]
+
+[[package]]
 name = "crabe_protobuf"
 version = "0.1.0"
 dependencies = [
@@ -157,6 +165,7 @@ version = "0.1.0"
 dependencies = [
  "bytes",
  "clap",
+ "crabe_framework",
  "crabe_protobuf",
  "ctrlc",
  "env_logger",

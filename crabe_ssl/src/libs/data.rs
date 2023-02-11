@@ -4,6 +4,7 @@ use crate::libs::robot::{AllyRobot, EnemyRobot};
 use nalgebra::Point2;
 use serde::{Deserialize, Serialize};
 use std::fmt::{Display, Formatter};
+use crabe_framework::data::field::Field;
 
 #[derive(Debug, Default, Serialize)]
 pub struct DataStore {
@@ -43,17 +44,6 @@ impl DataStore {
     pub fn active_allies(&self) -> impl Iterator<Item = &AllyRobot> {
         self.allies.iter().filter_map(|x| x.as_ref())
     }
-}
-
-#[derive(Debug, Default, Serialize, Deserialize, Copy, Clone)]
-pub struct Field {
-    pub width: f32,
-    pub length: f32,
-    pub goal_width: f32,
-    pub goal_depth: f32,
-    pub penalty_depth: f32,
-    pub penalty_width: f32,
-    pub center_radius: f32,
 }
 
 #[derive(Debug, Copy, Clone, Serialize, Deserialize)]
