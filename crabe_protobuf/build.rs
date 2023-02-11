@@ -7,7 +7,7 @@ fn compile_packet(filename: &str, protos: &[impl AsRef<Path>], includes: &[impl 
 
     build
         .default_package_filename(filename)
-        .out_dir(PathBuf::from("src/libs/protobuf/"))
+        .out_dir(PathBuf::from("src/"))
         .compile_protos(protos, includes)
         .expect(format!("Failed to compile {} protobuf files", filename).as_str());
 }

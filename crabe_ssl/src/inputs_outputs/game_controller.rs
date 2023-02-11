@@ -1,6 +1,6 @@
 use crate::inputs_outputs::multicast_client::MulticastClient;
 use crate::libs::cli::Cli;
-use crate::libs::protobuf::game_controller_packet::Referee;
+use crabe_protobuf::game_controller_packet::Referee;
 use std::sync::mpsc;
 
 pub struct GameController {

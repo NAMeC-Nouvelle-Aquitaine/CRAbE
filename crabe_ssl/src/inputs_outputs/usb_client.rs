@@ -2,7 +2,7 @@ use crate::inputs_outputs::output::OutputCommandSending;
 use crate::libs::cli::Cli;
 use crate::libs::constants::NUMBER_OF_ROBOTS;
 use crate::libs::data::{Command, Kick};
-use crate::libs::protobuf::robot_packet::IaToMainBoard;
+use crabe_protobuf::robot_packet::IaToMainBoard;
 use crate::libs::robot::AllyRobotInfo;
 use clap::Args;
 use log::{debug, error};

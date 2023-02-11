@@ -5,7 +5,6 @@ use crate::libs::data::{DataStore, Kick};
 use log::debug;
 use serde::{Deserialize, Serialize};
 use std::net::{Ipv4Addr, UdpSocket};
-use zmq::{Context, Socket};
 
 const BUFFER_SIZE: usize = 4096;
 

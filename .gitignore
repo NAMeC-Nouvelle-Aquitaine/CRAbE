@@ -1,2 +1,6 @@
+# RUST specific
 /target
+
+# IDE
 .idea/
+.vscode/

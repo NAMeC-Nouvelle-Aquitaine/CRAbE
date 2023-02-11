@@ -1,6 +1,6 @@
 use crate::inputs_outputs::multicast_client::MulticastClient;
 use crate::libs::cli::Cli;
-use crate::libs::protobuf::vision_packet::SslWrapperPacket;
+use crabe_protobuf::vision_packet::SslWrapperPacket;
 use clap::Args;
 use std::sync::mpsc;
 

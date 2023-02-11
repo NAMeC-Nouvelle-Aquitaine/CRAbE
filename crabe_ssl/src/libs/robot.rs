@@ -1,4 +1,4 @@
-use crate::libs::protobuf::vision_packet::SslDetectionRobot;
+use crabe_protobuf::vision_packet::SslDetectionRobot;
 use nalgebra::Point2;
 use serde::{Deserialize, Serialize};
 

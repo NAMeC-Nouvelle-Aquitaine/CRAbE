@@ -3,7 +3,7 @@ use crate::inputs_outputs::output::OutputCommandSending;
 use crate::libs::cli::Cli;
 use crate::libs::constants::NUMBER_OF_ROBOTS;
 use crate::libs::data::{Command, Kick};
-use crate::libs::protobuf::simulation_packet::{
+use crabe_protobuf::simulation_packet::{
     robot_move_command, MoveLocalVelocity, RobotCommand, RobotControl, RobotControlResponse,
     RobotMoveCommand,
 };
