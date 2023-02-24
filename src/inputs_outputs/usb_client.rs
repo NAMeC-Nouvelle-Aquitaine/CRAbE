@@ -27,8 +27,8 @@ impl USBClient {
             None => {
                 (0, 0.0 as f32) // TODO : Remove this 0 and use the kicker enum
             }
-            Some(Kick::StraightKick { power }) => (1, power),
-            Some(Kick::ChipKick { power }) => (2, power),
+            Some(Kick::StraightKick { power }) => (2, power),
+            Some(Kick::ChipKick { power }) => (1, power),
         };
 
         IaToMainBoard {
