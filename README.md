@@ -1,5 +1,7 @@
 # CRAbE - Central AI of NAMeC
 
+This CRAbE is deprecated in favor of another package that will be available in 08/03/2023.
+
 ## Installation
 
 ### Ubuntu 22.04
